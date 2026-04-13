@@ -1,4 +1,4 @@
-package uz.java.entity;
+package uz.java.entity.userSeekingJob;
 
 import jakarta.persistence.*;
 import lombok.*;

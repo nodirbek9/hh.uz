@@ -1,4 +1,4 @@
-package uz.java.entity;
+package uz.java.entity.userSeekingJob;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,20 +13,20 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-@Table(name = "resumes")
-public class Resume {
-
+@Table(name = "certificates")
+public class Certificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100)
+    @Column(length = 250)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(length = 250)
+    private String issuer;
 
-    private LocalDate establishedDate;
+    private LocalDate date;
 
-    // vahokazo
+    @Column(length = 250)
+    private String url;
 }
