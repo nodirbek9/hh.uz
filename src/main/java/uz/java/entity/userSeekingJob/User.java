@@ -16,8 +16,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "first_name")
-    String firstName;
+    @Column(name = "password")
+    String password;
 
 //    OneToMany
 //    ManyToOne    boglanish turlari
@@ -25,21 +25,15 @@ public class User {
 //    OneToOne
 //    private Resume resume;
 
-
-
     @Column(unique = true)
     String username;
-
-    @Column(name = "last_name")
-    String lastName;
 
     @Column(unique = true)
     String email;
 
-    @Column(columnDefinition = "VARCHAR DEFAULT 998 ")
-    String phone;
+    @Enumerated(EnumType.STRING)
+    Status status;
 
-    String photoUrl;
 
     // keyinchalik qoshamiz
 }
