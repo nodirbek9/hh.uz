@@ -1,4 +1,5 @@
 package uz.java.entity.usersHiring;
 
 public class VacancyRequirement {
+    //privates
 }
