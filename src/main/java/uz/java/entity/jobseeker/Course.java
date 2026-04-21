@@ -1,4 +1,4 @@
-package uz.java.entity.userSeekingJob;
+package uz.java.entity.jobseeker;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,27 +6,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Getter
 @Setter
-@Table(name = "certificates")
-public class Certificate {
+@Table(name = "courses")
+public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 250)
+    @ManyToOne
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
+
     private String name;
 
-    @Column(length = 250)
-    private String issuer;
+    private String organization;
 
-    private LocalDate date;
+    private String specialisation;
 
-    @Column(length = 250)
-    private String url;
+    @Column(name = "graduation_year")
+    private String graduationYear;
 }

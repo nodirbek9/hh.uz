@@ -1,22 +1,25 @@
-package uz.java.entity.userSeekingJob;
+package uz.java.entity.employer;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Getter
-@Setter
-@Table(name = "skills")
-public class Skill {
+@Data
+@Table(name = "vacancy_categories")
+public class VacancyCategory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 250)
     private String name;
+
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    private String iconUrl;
 }

@@ -1,4 +1,4 @@
-package uz.java.entity.userSeekingJob;
+package uz.java.entity.enums;
 
 public enum Status {
     ACTIVE,

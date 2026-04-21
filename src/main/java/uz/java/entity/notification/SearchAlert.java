@@ -1,25 +1,31 @@
-package uz.java.entity.userSeekingJob;
+package uz.java.entity.notification;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.User;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Getter
 @Setter
-@Table(name = "languages")
-public class Language {
+@Table(name = "search_alerts")
+public class SearchAlert {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 250)
-    private String langName;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(length = 250)
-    private String level;
+    private String keyword;
+
+    private String city;
+
+    private String category;
 }
