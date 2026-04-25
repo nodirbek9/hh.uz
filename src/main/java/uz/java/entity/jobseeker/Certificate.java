@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 import java.time.LocalDate;
 
@@ -14,10 +15,17 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Table(name = "certificates")
-public class Certificate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Certificate extends Auditable {
+
+    private String name;
+
+    private String receivedFrom;
+
+    private LocalDate receivedAt;
+
+    private String contactName;
+
+    private LocalDate issueAt;
 
     @ManyToOne
     @JoinColumn(name = "resume_id")

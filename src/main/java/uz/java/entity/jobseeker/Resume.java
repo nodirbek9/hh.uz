@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.java.entity.enums.Status;
+import uz.java.entity.user.Auditable;
 import uz.java.entity.user.User;
 
 import java.util.ArrayList;
@@ -19,11 +20,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "resumes")
-public class Resume {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Resume extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -46,5 +43,5 @@ public class Resume {
             joinColumns = {@JoinColumn(name = "resume_id")},
             inverseJoinColumns = {@JoinColumn(name = "skill_id")}
     )
-    private Set<ResumeSkill> skills = new HashSet<>();
+    private Set<Skill> skills = new HashSet<>();
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 import java.time.LocalDate;
 @AllArgsConstructor
@@ -13,10 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Table(name = "workExperinces")
-public class WorkExperience {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class WorkExperience extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "resume_id")

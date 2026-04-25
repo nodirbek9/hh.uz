@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,12 +13,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "tags")
-public class Tag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Tag extends Auditable {
 
-    private String TagName;
+    private String tagName;
 
-    private String codd;
+    private String code;
 }

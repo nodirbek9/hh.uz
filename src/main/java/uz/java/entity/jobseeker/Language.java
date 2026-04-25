@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.java.entity.enums.LanguageLevel;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,10 +14,7 @@ import uz.java.entity.enums.LanguageLevel;
 @Getter
 @Setter
 @Table(name = "languages")
-public class Language {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Language extends Auditable {
 
     private String name;
 

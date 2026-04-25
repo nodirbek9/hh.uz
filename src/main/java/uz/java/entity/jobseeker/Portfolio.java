@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,17 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "portfolio_list")
-public class Portfolio {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Portfolio extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
-    // TODO -- If you need an annotation for the image url, you need to implement it.
     private String image;
-
-    private String url;
 }

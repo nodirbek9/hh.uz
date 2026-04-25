@@ -4,22 +4,19 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Data
 @Table(name = "vacancy_categories")
-public class VacancyCategory {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class VacancyCategory extends Auditable {
 
     private String name;
 
     @Column(name = "parent_id")
-    private Long parentId;
+    private String parentId;
 
     private String iconUrl;
 }

@@ -3,11 +3,7 @@ package uz.java.entity.user;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import uz.java.entity.enums.Status;
 import uz.java.entity.enums.UserRole;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity  // Entity anotatsiya shu class bazada ham shunaqa nomli table yaratmoqchimiz
 @Getter // getter method uchun
@@ -16,10 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor // bo'sh construktor yaratadi
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
-    @Id  // id ni primary key qilib beradigan anotatsiya
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+public class User extends Auditable {
 
     @Column(unique = true)
     String email;
@@ -28,19 +21,12 @@ public class User {
     String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    UserRole role;
 
     @Column(name = "is_active")
-    private Boolean isActive;
+    Boolean isActive;
 
     @Column(name = "is_verified")
-    private Boolean isVerified;
+    Boolean isVerified;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // keyinchalik qoshamiz
 }

@@ -18,10 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "userProfiles")
-public class UserProfile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserProfile extends Auditable{
 
     @Column(name = "user_id")
     private Long userId;

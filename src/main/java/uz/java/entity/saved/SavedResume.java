@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.java.entity.jobseeker.Resume;
+import uz.java.entity.user.Auditable;
 import uz.java.entity.user.UserProfile;
 
 @AllArgsConstructor
@@ -14,11 +15,7 @@ import uz.java.entity.user.UserProfile;
 @Getter
 @Setter
 @Table(name = "saved_resumes")
-public class SavedResume {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SavedResume extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -27,7 +24,4 @@ public class SavedResume {
     @OneToOne
     @JoinColumn(name = "resume_id")
     private Resume resume;
-
-    @Column(name = "saved_at")
-    private String savedAt;
 }

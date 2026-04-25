@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,11 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "courses")
-public class Course {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Course extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "resume_id")

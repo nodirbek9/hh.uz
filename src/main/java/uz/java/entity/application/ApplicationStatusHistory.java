@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,11 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "application_status_histories")
-public class ApplicationStatusHistory {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ApplicationStatusHistory extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "application_id")
@@ -27,12 +24,6 @@ public class ApplicationStatusHistory {
 
     @Column(name = "new_status")
     private String newStatus;
-
-    @Column(name = "changed_by")
-    private String changedBy;
-
-    @Column(name = "changed_at")
-    private String changedAt;
 
     private String comment;
 }

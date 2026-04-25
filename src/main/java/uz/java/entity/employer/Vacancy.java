@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.java.entity.enums.CurrencyType;
-import uz.java.entity.enums.EmploymentType;
-import uz.java.entity.enums.Experience;
-import uz.java.entity.enums.StatusVacancy;
+import uz.java.entity.enums.*;
 import uz.java.entity.jobseeker.Skill;
+import uz.java.entity.user.Auditable;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -21,11 +19,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "vacancies")
-public class Vacancy {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Vacancy extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -54,6 +48,8 @@ public class Vacancy {
     @Enumerated(EnumType.STRING)
     private CurrencyType currency;
 
+    private WorkTimeSlot timeSlot;
+
     @Enumerated(EnumType.STRING)
     private EmploymentType employmentType;
 
@@ -72,9 +68,6 @@ public class Vacancy {
 
     @Column(name = "view_count")
     private Integer viewCount;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 
     private String contactName;
 }

@@ -6,17 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.java.entity.employer.Company;
 import uz.java.entity.enums.SubscriptionPlan;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Data
 @Table(name = "subscription_companies")
-public class SubscriptionCompany {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SubscriptionCompany extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "company_id")

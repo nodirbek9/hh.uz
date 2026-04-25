@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 import uz.java.entity.user.User;
 
 import java.util.ArrayList;
@@ -16,11 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "companies")
-public class Company {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Company extends Auditable {
 
     @OneToOne
     @JoinColumn(name = "owner_id")
