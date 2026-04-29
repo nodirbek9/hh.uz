@@ -22,5 +22,5 @@ public class VacancyRequest {
     String location;
     String city;
     Integer salary;
-    CurrencyType currency;
+    String currency;
 }

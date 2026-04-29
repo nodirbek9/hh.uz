@@ -14,7 +14,7 @@ public class VacancyResponse {
     String description;
     Long companyId;
     Integer salary;
-    CurrencyType currency;
+    String currency;
     EmploymentType employmentType;
     String experience;
     String city;
