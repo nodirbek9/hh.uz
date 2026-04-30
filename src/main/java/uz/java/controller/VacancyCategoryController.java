@@ -4,12 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.java.dto.tag.TagRequest;
-import uz.java.dto.tag.TagResponse;
 import uz.java.dto.vacancy.VacancyCategoryRequest;
 import uz.java.dto.vacancy.VacancyCategoryResponse;
-import uz.java.entity.employer.VacancyCategory;
-import uz.java.service.TagService;
 import uz.java.service.VacancyCategoryService;
 
 import java.util.List;
