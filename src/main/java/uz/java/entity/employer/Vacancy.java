@@ -48,6 +48,18 @@ public class Vacancy extends Auditable {
     @Enumerated(EnumType.STRING)
     private CurrencyType currency;
 
+    @Enumerated(EnumType.STRING)
+    private SalaryFrequency salaryFrequency;
+
+    @Enumerated(EnumType.STRING)
+    private SearchKey searchKey;
+
+    @Enumerated(EnumType.STRING)
+    private RequiredVocational vocational;
+
+    @Enumerated(EnumType.STRING)
+    private WorkingHours workingHours;
+
     private WorkTimeSlot timeSlot;
 
     @Enumerated(EnumType.STRING)
@@ -62,6 +74,13 @@ public class Vacancy extends Auditable {
     private StatusVacancy status;
 
     private String location;
+
+    @Column(name = "work_format")
+    @Enumerated(EnumType.STRING)
+    private WorkFormat  workFormat;
+
+    @Enumerated(EnumType.STRING)
+    private VacancyDisplay vacancyDisplay;
 
     @Column(name = "is_remote")
     private Boolean isRemote;

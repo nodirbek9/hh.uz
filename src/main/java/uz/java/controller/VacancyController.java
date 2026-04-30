@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.java.dto.company.CompanyResponse;
+import uz.java.dto.vacancy.VacancyFilter;
 import uz.java.dto.vacancy.VacancyRequest;
 import uz.java.dto.vacancy.VacancyResponse;
 import uz.java.service.VacancyService;
@@ -35,8 +35,26 @@ public class VacancyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VacancyResponse>> getAll(){
-        return ResponseEntity.ok(vacancyService.getAll());
+    public ResponseEntity<List<VacancyResponse>> getAll(@RequestParam Integer page,
+                                                        @RequestParam Integer limit,
+                                                        @RequestParam String sortBy,
+                                                        @RequestParam(required = false) String search,
+                                                        @RequestParam(required = false) Integer salaryFrom,
+                                                        @RequestParam(required = false) String currencyType,
+                                                        @RequestBody(required = false) List<String> employmentType,
+                                                        @RequestParam(required = false) List<String> experience,
+                                                        @RequestParam(required = false) List<String> workTimeSlot,
+                                                        @RequestParam(required = false) List<String> workFormat,
+                                                        @RequestParam(required = false) List<Long> companyIndustryId,
+                                                        @RequestParam(required = false) List<Long> countryIds,
+                                                        @RequestParam(required = false) List<Long> cityIds,
+                                                        @RequestParam(required = false) List<String> salaryFrequency,
+                                                        @RequestParam(required = false) List<String> vocational,
+                                                        @RequestParam(required = false) List<String> workingHours,
+                                                        @RequestParam(required = false) List<String> vacancyDisplay){
+        return ResponseEntity.ok(vacancyService.getAll(new VacancyFilter(page, limit, sortBy, search,
+                salaryFrom, currencyType, employmentType, experience, workTimeSlot, workFormat,
+                companyIndustryId, countryIds, cityIds, salaryFrequency, vocational, workingHours, vacancyDisplay)));
     }
 
     @DeleteMapping("/{id}")

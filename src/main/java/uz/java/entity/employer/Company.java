@@ -9,7 +9,9 @@ import uz.java.entity.user.Auditable;
 import uz.java.entity.user.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,9 +31,7 @@ public class Company extends Auditable {
 
     private String logo;
 
-    private String country;
-
-    private String city;
+    private Long cityId;
 
     @Column(columnDefinition = "VARCHAR DEFAULT 998 ")
     private String phone;
@@ -44,4 +44,11 @@ public class Company extends Auditable {
 
     @ElementCollection
     private List<String> imageUrls = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "company_industries",
+            joinColumns = {@JoinColumn(name = "company_id")},
+            inverseJoinColumns = {@JoinColumn(name = "company_industry_id")}
+    )
+    private Set<CompanyIndustry> companyIndustry = new HashSet<>();
 }
