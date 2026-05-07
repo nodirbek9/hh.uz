@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import uz.java.dto.company.CompanyRequest;
 import uz.java.dto.company.CompanyResponse;
 import uz.java.entity.employer.Company;
+import uz.java.exception.GenericNotFoundException;
+import uz.java.exception.InvalidDataException;
 import uz.java.mapper.CompanyMapper;
 import uz.java.repository.CompanyRepository;
 
@@ -17,11 +19,11 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
-    private static final String EXCEPTION_MESSAGE = "Company is not found";
+    private static final String EXCEPTION_MESSAGE = "company.not.found";
 
     public CompanyResponse getOne(Long id) {
         Company company = companyRepository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         // Optional class bu NullPointerException dan qochish uchun ishlatiladi, obyektni wrap qiladigan class
 //        this class handles null object without throw NullPointerException
@@ -29,6 +31,9 @@ public class CompanyService {
     }
 
     public Long create(CompanyRequest request) {
+        if (request.getEmail().isEmpty()) {
+            throw new InvalidDataException("invalid.email");
+        }
         Company company = companyMapper.toCompany(request);
         Company saved = companyRepository.save(company);
         return saved.getId();
@@ -37,7 +42,7 @@ public class CompanyService {
     public Boolean update(Long id, CompanyRequest request) {
         Optional<Company> opt = companyRepository.findById(id);
         if (!opt.isPresent()) {
-            throw new RuntimeException("Company not found");
+            throw new GenericNotFoundException(EXCEPTION_MESSAGE);
         }
         Company company = opt.get();
         companyMapper.updateFromRequest(request, company);
@@ -53,7 +58,7 @@ public class CompanyService {
 
     public Boolean delete(Long id) {
         Company company = companyRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Company not found")
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         // hard delete
 //        companyRepository.delete(company);
@@ -68,6 +73,4 @@ public class CompanyService {
         Company company = companyRepository.findByNomi(name);
         return getOne(company.getId());
     }
-
-
 }

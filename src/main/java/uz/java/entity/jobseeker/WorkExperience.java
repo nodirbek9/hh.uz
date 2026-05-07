@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.java.entity.user.Auditable;
+import uz.java.entity.user.UserProfile;
 
-import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -19,6 +19,10 @@ public class WorkExperience extends Auditable {
     @ManyToOne
     @JoinColumn(name = "resume_id")
     private Resume resume;
+
+    @ManyToOne
+    @JoinColumn(name = "user_profile_id")
+    private UserProfile userProfile;
 
     @Column(name = "company_name")
     private String companyName;

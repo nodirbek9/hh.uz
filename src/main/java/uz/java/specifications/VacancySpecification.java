@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 import uz.java.dto.vacancy.VacancyFilter;
 import uz.java.entity.employer.Vacancy;

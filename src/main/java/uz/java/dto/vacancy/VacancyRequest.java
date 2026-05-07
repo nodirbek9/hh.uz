@@ -1,11 +1,10 @@
 package uz.java.dto.vacancy;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
-import jakarta.validation.constraints.NotNull;
 import lombok.experimental.FieldDefaults;
-import uz.java.entity.enums.CurrencyType;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)

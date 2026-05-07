@@ -6,6 +6,7 @@ import uz.java.dto.vacancy.VacancyFilter;
 import uz.java.dto.vacancy.VacancyRequest;
 import uz.java.dto.vacancy.VacancyResponse;
 import uz.java.entity.employer.Vacancy;
+import uz.java.exception.GenericNotFoundException;
 import uz.java.mapper.VacancyMapper;
 import uz.java.repository.VacancyRepository;
 import uz.java.specifications.SearchSpecification;
@@ -19,11 +20,11 @@ public class VacancyService {
 
     private final VacancyRepository repository;
     private final VacancyMapper mapper;
-    private static final String EXCEPTION_MESSAGE = "Vacancy is not found";
+    private static final String EXCEPTION_MESSAGE = "vacancy.not.found";
 
     public VacancyResponse getOne(Long id) {
         Vacancy vacancy = repository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         return mapper.toVacancyResponse(vacancy);
     }
@@ -35,7 +36,7 @@ public class VacancyService {
 
     public Boolean update(Long id, VacancyRequest request) {
         Vacancy vacancy = repository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         mapper.updateFromRequest(request, vacancy);
         repository.save(vacancy);
@@ -44,7 +45,7 @@ public class VacancyService {
 
     public Boolean delete(Long id) {
         Vacancy vacancy = repository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         vacancy.makeAsDeleted();
         repository.save(vacancy);
@@ -59,7 +60,8 @@ public class VacancyService {
     public List<VacancyResponse> getAll(VacancyFilter filter) {
         VacancySpecification spec = new VacancySpecification(filter);
         return repository.findAll(spec, SearchSpecification.getPageable(filter.getPage(),
-                filter.getLimit(), filter.getSortBy())).stream().filter(vacancy -> !vacancy.isDeleted())
+                filter.getLimit(), filter.getSortBy())).stream()
+                .filter(vacancy -> !vacancy.isDeleted())
                 .map(mapper::toVacancyResponse).toList();
     }
 }

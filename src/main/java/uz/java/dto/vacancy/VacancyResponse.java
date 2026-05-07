@@ -3,7 +3,6 @@ package uz.java.dto.vacancy;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import uz.java.entity.enums.CurrencyType;
 import uz.java.entity.enums.EmploymentType;
 
 @Data

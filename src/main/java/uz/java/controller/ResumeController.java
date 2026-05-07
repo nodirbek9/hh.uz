@@ -1,12 +1,9 @@
 package uz.java.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 import uz.java.dto.resume.ResumeRequest;
-import uz.java.dto.resume.ResumeResponse;
 import uz.java.service.ResumeService;
 
 @RestController

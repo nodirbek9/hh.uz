@@ -7,7 +7,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import uz.java.dto.vacancy.VacancyCategoryRequest;
 import uz.java.dto.vacancy.VacancyCategoryResponse;
 import uz.java.entity.employer.Specializations;
-import uz.java.entity.employer.VacancyCategory;
 
 @Mapper(componentModel = "spring")
 public interface VacancyCategoryMapper {

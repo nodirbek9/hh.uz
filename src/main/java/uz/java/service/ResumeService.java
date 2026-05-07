@@ -1,19 +1,17 @@
 package uz.java.service;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.java.dto.resume.ResumeRequest;
 import uz.java.dto.resume.ResumeResponse;
-import uz.java.entity.jobseeker.Certificate;
-import uz.java.entity.jobseeker.Resume;
-import uz.java.entity.jobseeker.Skill;
+import uz.java.entity.employer.Profession;
+import uz.java.entity.jobseeker.*;
+import uz.java.exception.GenericNotFoundException;
 import uz.java.mapper.CertificateMapper;
 import uz.java.mapper.ResumeMapper;
 import uz.java.mapper.SkillMapper;
-import uz.java.repository.CertificateRepository;
-import uz.java.repository.ResumeRepository;
-import uz.java.repository.SkillRepository;
+import uz.java.mapper.WorkExperienceMapper;
+import uz.java.repository.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,16 +26,20 @@ public class ResumeService {
     private final SkillMapper skillMapper;
     private final CertificateRepository certificateRepository;
     private final SkillRepository skillRepository;
+    private final ProfessionRepository professionRepository;
+    private final EducationRepository educationRepository;
+    private final WorkExperienceMapper workExperienceMapper;
+    private static final String EXCEPTION_MESSAGE = "resume.not.found";
 
     public ResumeResponse getOne(Long id) {
 
         Resume resume = resumeRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Resume not found")
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         ResumeResponse response = resumeMapper.toResponse(resume);
         List<Certificate> certificateList = resume.getCertificateList();
         List<ResumeResponse.CertificateShortResponse> list = certificateList.stream()
-                        .map(certificateMapper::toStringResponse).toList();
+                        .map(certificateMapper::toShortResponse).toList();
 
         response.setCertificateList(list);
         Set<Skill> skills = resume.getSkills();
@@ -49,62 +51,81 @@ public class ResumeService {
     }
 
     public Long create(ResumeRequest request) {
-        List<Certificate> certificateList = new ArrayList<>();
-        if (!Objects.isNull(request.getCertificateIds())) {
-            request.getCertificateIds().stream().forEach(id -> {
-                Certificate certificate = certificateRepository.findById(id).orElseThrow(
-                        () -> new RuntimeException("Certificate not found with this id: " + id)
-                );
-                certificateList.add(certificate);
-            });
-        }
+        Profession profession = professionRepository.findById(request.getProfessionId())
+                .orElseThrow(() -> new GenericNotFoundException(EXCEPTION_MESSAGE));
+
         Set<Skill> skills = new HashSet<>();
         if (!Objects.isNull(request.getSkillIds())) {
-            request.getSkillIds().stream().forEach(id -> {
-                Skill skill = skillRepository.findById(id).orElseThrow(
-                        () -> new RuntimeException("Skill not found with this id: " + id)
+            request.getSkillIds().stream().forEach(skillDto -> {
+                Skill skill = skillRepository.findById(skillDto.getId()).orElseThrow(
+                        () -> new GenericNotFoundException(EXCEPTION_MESSAGE + skillDto)
                 );
                 skills.add(skill);
             });
         }
-        Resume entity = resumeMapper.toEntity(request);
-        entity.setSkills(skills);
-        entity.setCertificateList(certificateList);
-        Resume save = resumeRepository.save(entity);
+
+        List<Education> educations = new ArrayList<>();
+        if (request.getEducationIds() != null) {
+            request.getEducationIds().forEach(eduId -> {
+                Education education = educationRepository.findById(eduId)
+                        .orElseThrow(() -> new GenericNotFoundException(EXCEPTION_MESSAGE + eduId));
+                educations.add(education);
+            });
+        }
+
+        List<WorkExperience> workExperiences = new ArrayList<>();
+        if (request.getWorkExperienceIds() != null) {
+            workExperiences = request.getWorkExperienceIds().stream()
+                    .map(workExperienceMapper::toEntity)
+                    .toList();
+        }
+
+        Resume resume = resumeMapper.toEntity(request);
+        resume.setProfession(profession);
+        resume.setSkills(skills);
+        resume.setEducationList(educations);
+        resume.setWorkExperienceList(workExperiences);
+
+        Resume save = resumeRepository.save(resume);
         return save.getId();
     }
 
-    public Object update(Long id, ResumeRequest request) {
+    public Long update(Long id, ResumeRequest request) {
         List<Certificate> certificateList = new ArrayList<>();
-
-        if (!Objects.isNull(request.getCertificateIds())) {
-            request.getCertificateIds().stream().forEach(element -> {
-                Certificate certificate = certificateRepository.findById(element).orElseThrow(
-                        () -> new RuntimeException("Certificate not found with this id: " + element)
-                );
-                certificateList.add(certificate);
-            });
-        }
-
-        Set<Skill> skills = new HashSet<>();
-
-        if (!Objects.isNull(request.getSkillIds())) {
-            request.getSkillIds().stream().forEach(element -> {
-                Skill skill = skillRepository.findById(element).orElseThrow(
-                        () -> new RuntimeException("Skill not found with this id: " + id)
-                );
-                skills.add(skill);
-            });
-        }
-
         Resume resume = resumeRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Resume not found")
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
+        if (request.getProfessionId() != null) {
+            Profession profession = professionRepository.findById(request.getProfessionId())
+                    .orElseThrow(() -> new GenericNotFoundException(EXCEPTION_MESSAGE));
+            resume.setProfession(profession);
+        }
 
-        resume.setSkills(skills);
-        resume.setCertificateList(certificateList);
-        resumeMapper.updateFromRequest(resume, request);
+        if (request.getSkillIds() != null) {
+            Set<Skill> skills = request.getSkillIds().stream()
+                    .map(skillDto -> skillRepository.findById(skillDto.getId())
+                            .orElseThrow(() -> new GenericNotFoundException(EXCEPTION_MESSAGE + skillDto.getId())))
+                    .collect(Collectors.toSet());
+            resume.setSkills(skills);
+        }
+
+        if (request.getEducationIds() != null) {
+            List<Education> educations = request.getEducationIds().stream()
+                    .map(eduId -> educationRepository.findById(eduId)
+                            .orElseThrow(() -> new GenericNotFoundException(EXCEPTION_MESSAGE + eduId)))
+                    .toList();
+            resume.setEducationList(educations);
+        }
+
+        if (request.getWorkExperienceIds() != null) {
+            List<WorkExperience> workExperiences = request.getWorkExperienceIds().stream()
+                    .map(workExperienceMapper::toEntity)
+                    .toList();
+            resume.setWorkExperienceList(workExperiences);
+        }
+
+        resumeMapper.updateFromRequest(request, resume);
         resumeRepository.save(resume);
-        return true;
+        return id;
     }
 }

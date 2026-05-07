@@ -1,6 +1,8 @@
 package uz.java.entity.jobseeker;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +30,5 @@ public class Certificate extends Auditable {
     private LocalDate issueAt;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id")
     private Resume resume;
 }

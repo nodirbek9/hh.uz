@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uz.java.dto.tag.TagRequest;
 import uz.java.dto.tag.TagResponse;
 import uz.java.entity.employer.Tag;
+import uz.java.exception.GenericNotFoundException;
 import uz.java.mapper.TagMapper;
 import uz.java.repository.TagRepository;
 
@@ -17,14 +18,14 @@ public class TagService {
 
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
-    private static final String EXCEPTION_MESSAGE = "Tag is not found";
+    private static final String EXCEPTION_MESSAGE = "tag.not.found";
 
 
     public TagResponse getOne(Long id) {
         Optional<Tag> tagById = tagRepository.findById(id);
 
         if (!tagById.isPresent()) {
-            throw new RuntimeException(EXCEPTION_MESSAGE);
+            throw new GenericNotFoundException(EXCEPTION_MESSAGE);
         }
         Tag tag = tagById.get();
         return tagMapper.toTagResponse(tag);
@@ -38,7 +39,7 @@ public class TagService {
 
     public Boolean update(Long id, TagRequest request) {
         Tag tagById = tagRepository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         tagMapper.updateFromRequest(request, tagById);
         tagRepository.save(tagById);
@@ -53,7 +54,7 @@ public class TagService {
 
     public Boolean delete(Long id) {
         Tag tag = tagRepository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         tag.makeAsDeleted();
         tagRepository.save(tag);

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uz.java.dto.vacancy.VacancyCategoryRequest;
 import uz.java.dto.vacancy.VacancyCategoryResponse;
 import uz.java.entity.employer.Specializations;
+import uz.java.exception.GenericNotFoundException;
 import uz.java.mapper.VacancyCategoryMapper;
 import uz.java.repository.VacancyCategoryRepository;
 
@@ -17,11 +18,11 @@ public class VacancyCategoryService {
     private final VacancyCategoryRepository repository;
     private final VacancyCategoryMapper mapper;
 
-    private static final String EXCEPTION_MESSAGE = "Specializations is not found";
+    private static final String EXCEPTION_MESSAGE = "specializations.not.found";
 
     public VacancyCategoryResponse getOne(Long id) {
         Specializations category = repository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         return mapper.toVacancyCategoryResponse(category);
     }
@@ -32,7 +33,7 @@ public class VacancyCategoryService {
 
     public Boolean update(Long id, VacancyCategoryRequest request) {
         Specializations oldCategory = repository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
         mapper.updateVacancyCategory(request, oldCategory);
         repository.save(oldCategory);
@@ -46,7 +47,7 @@ public class VacancyCategoryService {
 
     public Boolean delete(Long id) {
         Specializations category = repository.findById(id).orElseThrow(
-                () -> new RuntimeException(EXCEPTION_MESSAGE)
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
 
         category.makeAsDeleted();

@@ -9,7 +9,6 @@ import uz.java.entity.enums.*;
 import uz.java.entity.jobseeker.Skill;
 import uz.java.entity.user.Auditable;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,6 +40,7 @@ public class Vacancy extends Auditable {
 
     private String name;
 
+    @Column(length = 10000)
     private String description;
 
     private Integer salary;
@@ -68,7 +68,7 @@ public class Vacancy extends Auditable {
     @Enumerated(EnumType.STRING)
     private Experience experience;
 
-    private String city;
+    private Long cityId;
 
     @Enumerated(EnumType.STRING)
     private StatusVacancy status;
@@ -81,9 +81,6 @@ public class Vacancy extends Auditable {
 
     @Enumerated(EnumType.STRING)
     private VacancyDisplay vacancyDisplay;
-
-    @Column(name = "is_remote")
-    private Boolean isRemote;
 
     @Column(name = "view_count")
     private Integer viewCount;

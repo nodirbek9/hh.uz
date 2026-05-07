@@ -20,7 +20,7 @@ public class ResumeResponse {
     Set<SkillResponse> skills = new HashSet<>();
 
     @Data
-    public class CertificateShortResponse {
+    public static class CertificateShortResponse {
         private Long id;
 
         private String name;
@@ -35,7 +35,7 @@ public class ResumeResponse {
     }
 
     @Data
-    public class SkillResponse {
+    public static class SkillResponse {
         private Long id;
         private String name;
         private String code;

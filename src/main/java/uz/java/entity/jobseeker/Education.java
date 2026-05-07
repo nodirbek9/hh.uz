@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.enums.EducationDegree;
 import uz.java.entity.user.Auditable;
-
-import java.time.LocalDate;
+import uz.java.entity.user.UserProfile;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,14 +18,17 @@ import java.time.LocalDate;
 public class Education extends Auditable {
 
     @ManyToOne
-    @JoinColumn(name = "resume_id")
-    private Resume resume;
+    @JoinColumn(name = "user_profile_id")
+    private UserProfile userProfile;
 
     private String name;
 
-    private String degree;
+    @Enumerated(EnumType.STRING)
+    private EducationDegree degree;
 
     private String facultyName;
+
+    private String speciality;
 
     @Column(name = "start_date")
     private String startDate;
