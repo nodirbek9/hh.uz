@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: hh-web-app
+
+  sql:
+    init:
+      platform: postgres
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/hh_db
+    username: postgres
+    password: 1111
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: public
+    liquibase-schema: hh_db_liquibase_schema
+    enabled: true
+    contexts: development
+    drop-first: false
+
+server:
+  port: 7070
+
+jwt:
+  token:
+    secret: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+
+auth:
+  white-list:
+    - /auth/login
+    - /auth/register
+    - /auth/refresh
+    - /locations/countries
+    - /locations/cities
+    - /professions
+    - /vacancyCategories
+kind: Application

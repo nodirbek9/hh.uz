@@ -46,10 +46,10 @@ public class Resume extends Auditable {
     )
     private Set<Skill> skills = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     private List<WorkExperience> workExperienceList = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     private List<Education> educationList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -58,4 +58,10 @@ public class Resume extends Auditable {
     @OneToOne
     @JoinColumn(name = "profession_id")
     private Profession profession;
+
+    @OneToMany(mappedBy = "resume")
+    private List<Course> courseList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "resume")
+    private List<Portfolio> portfolioList = new ArrayList<>();
 }

@@ -20,4 +20,6 @@ public class VacancyResponse {
     String status;
     String location;
     String contactName;
+    private Long specializationId;
+    private String specializationName;
 }

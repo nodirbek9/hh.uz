@@ -2,14 +2,17 @@ package uz.java.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uz.java.dto.resume.CertificateFilter;
 import uz.java.dto.resume.CertificateRequest;
-import uz.java.dto.resume.ResumeResponse;
+import uz.java.dto.resume.CertificateShortResponse;
 import uz.java.entity.jobseeker.Certificate;
 import uz.java.entity.jobseeker.Resume;
 import uz.java.exception.GenericNotFoundException;
 import uz.java.mapper.CertificateMapper;
 import uz.java.repository.CertificateRepository;
 import uz.java.repository.ResumeRepository;
+import uz.java.specifications.SearchSpecification;
 
 import java.util.List;
 
@@ -21,13 +24,15 @@ public class CertificateService {
     private final ResumeRepository resumeRepository;
     private final CertificateMapper mapper;
 
-    public ResumeResponse.CertificateShortResponse getOne(Long id) {
+    @Transactional(readOnly = true)
+    public CertificateShortResponse getOne(Long id) {
         Certificate certificate = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException("certificate.not.found")
         );
         return mapper.toShortResponse(certificate);
     }
 
+    @Transactional
     public Long create(CertificateRequest request) {
 
         Resume resume = resumeRepository.findById(request.getResumeId()).orElseThrow(
@@ -38,6 +43,7 @@ public class CertificateService {
         return repository.save(certificate).getId();
     }
 
+    @Transactional
     public Boolean update(Long id, CertificateRequest request) {
         Certificate oldCertificate = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException("certificate.not.found")
@@ -51,10 +57,15 @@ public class CertificateService {
         return true;
     }
 
-    public List<ResumeResponse.CertificateShortResponse> getAll() {
-        return repository.findAll().stream().filter(t -> !t.isDeleted()).map(mapper::toShortResponse).toList();
+    @Transactional(readOnly = true)
+    public List<CertificateShortResponse> getAll(CertificateFilter filter) {
+//        return repository.findAllCustom(filter.getName() != null ? filter.getName() : "", SearchSpecification.getPageable(filter.getPage(),
+//                filter.getLimit(), filter.getSortBy())).stream().map(mapper::toShortResponse).toList();
+        return repository.findAllCustom(filter.getName() != null ? filter.getName() : "", SearchSpecification.getPageable(filter.getPage(),
+                filter.getLimit(), filter.getSortBy()));
     }
 
+    @Transactional
     public Boolean delete(Long id) {
         Certificate certificate = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException("certificate.not.found")
@@ -65,7 +76,8 @@ public class CertificateService {
         return true;
     }
 
-    public ResumeResponse.CertificateShortResponse getByName(String name) {
+    @Transactional(readOnly = true)
+    public CertificateShortResponse getByName(String name) {
         Certificate certificate = repository.findByNameCustom(name);
         return getOne(certificate.getId());
     }

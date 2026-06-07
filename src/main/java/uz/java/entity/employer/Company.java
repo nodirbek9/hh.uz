@@ -33,14 +33,14 @@ public class Company extends Auditable {
 
     private Long cityId;
 
-    @Column(columnDefinition = "VARCHAR DEFAULT 998 ")
+    @Column(length = 13)
     private String phone;
 
     @Column(unique = true)
     private String email;
 
     @Column(name = "is_verified")
-    private String isVerified;
+    private Boolean isVerified;
 
     @ElementCollection
     private List<String> imageUrls = new ArrayList<>();

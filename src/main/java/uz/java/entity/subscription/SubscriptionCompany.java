@@ -8,6 +8,8 @@ import uz.java.entity.employer.Company;
 import uz.java.entity.enums.SubscriptionPlan;
 import uz.java.entity.user.Auditable;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,10 +25,10 @@ public class SubscriptionCompany extends Auditable {
     private SubscriptionPlan plan;
 
     @Column(name = "start_date")
-    private String startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private String endDate;
+    private LocalDate endDate;
 
     @Column(name = "is_Active")
     private Boolean isActive;

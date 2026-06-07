@@ -2,6 +2,7 @@ package uz.java.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.java.dto.resume.EducationResponse;
 import uz.java.dto.user.LanguageResponse;
 import uz.java.dto.user.UserProfileRequest;
@@ -39,6 +40,7 @@ public class UserProfileService {
     private final LanguageMapper languageMapper;
     private static final String EXCEPTION_MESSAGE = "userProfile.not.found";
 
+    @Transactional(readOnly = true)
     public UserProfileResponse getUserProfile(Long id) {
         UserProfile profile = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
@@ -58,7 +60,7 @@ public class UserProfileService {
         return response;
     }
 
-
+    @Transactional
     public Long update(Long id, UserProfileRequest request) {
         UserProfile profile = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
@@ -80,7 +82,7 @@ public class UserProfileService {
         return profile.getId();
     }
 
-
+    @Transactional
     public Boolean delete(Long id) {
         UserProfile userProfile = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)

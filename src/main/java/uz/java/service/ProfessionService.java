@@ -1,6 +1,7 @@
 package uz.java.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.java.dto.resume.ProfessionResponse;
 import uz.java.entity.employer.Profession;
 import uz.java.mapper.ProfessionMapper;
@@ -19,11 +20,12 @@ public class ProfessionService {
         this.mapper = mapper;
     }
 
+    @Transactional(readOnly = true)
     public List<ProfessionResponse> getAll(Integer page, Integer limit, String sortBy) {
         return professionRepository.findAll(SearchSpecification.getPageable(
                 page, limit, sortBy)).stream().map(mapper::toResponse).toList();
     }
-
+    @Transactional(readOnly = true)
     public List<ProfessionResponse> getProfessionByParentId(Long parentId) {
         List<Profession> list = professionRepository.findByParentId(parentId);
         return list.stream().map(mapper::toResponse).toList();

@@ -8,12 +8,14 @@ import lombok.Setter;
 import uz.java.entity.user.Auditable;
 import uz.java.entity.user.UserProfile;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Getter
 @Setter
-@Table(name = "workExperinces")
+@Table(name = "work_experiences")
 public class WorkExperience extends Auditable {
 
     @ManyToOne
@@ -33,10 +35,10 @@ public class WorkExperience extends Auditable {
     private String description;
 
     @Column(name = "start_date")
-    private String startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private String endDate;
+    private LocalDate endDate;
 
     @Column(name = "is_current")
     private Boolean isCurrent;

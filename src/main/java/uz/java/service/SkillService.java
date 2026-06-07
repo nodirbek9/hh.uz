@@ -2,8 +2,9 @@ package uz.java.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import uz.java.dto.resume.ResumeResponse;
+import org.springframework.transaction.annotation.Transactional;
 import uz.java.dto.resume.SkillRequest;
+import uz.java.dto.resume.SkillResponse;
 import uz.java.entity.jobseeker.Skill;
 import uz.java.exception.GenericNotFoundException;
 import uz.java.mapper.SkillMapper;
@@ -19,7 +20,8 @@ public class SkillService {
     private final SkillMapper mapper;
     private static final String EXCEPTION_MESSAGE = "skill.not.found";
 
-    public ResumeResponse.SkillResponse getOne(Long id) {
+    @Transactional(readOnly = true)
+    public SkillResponse getOne(Long id) {
         Skill skill = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
@@ -40,9 +42,9 @@ public class SkillService {
         return true;
     }
 
-    public List<ResumeResponse.SkillResponse> getAll() {
-        return repository.findAll().stream()
-                .filter(t -> !t.isDeleted()).map(mapper::toResponse).toList();
+    @Transactional(readOnly = true)
+    public List<SkillResponse> getAll(String search) {
+        return repository.findAllCustom(search);
     }
 
     public Boolean delete(Long id) {
@@ -55,7 +57,8 @@ public class SkillService {
         return true;
     }
 
-    public ResumeResponse.SkillResponse getByName(String name) {
+    @Transactional(readOnly = true)
+    public SkillResponse getByName(String name) {
         Skill skill = repository.findByNameCustom(name);
         return getOne(skill.getId());
     }

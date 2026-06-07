@@ -14,6 +14,8 @@ import uz.java.entity.enums.UserRole;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User extends Auditable {
 
+    String username;
+
     @Column(unique = true)
     String email;
 

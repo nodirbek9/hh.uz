@@ -1,5 +1,6 @@
 package uz.java.handler;
 
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import uz.java.exception.GenericNotFoundException;
+import uz.java.exception.GenericRuntimeException;
 import uz.java.exception.InvalidDataException;
 import uz.java.util.ErrorUtil;
 import uz.java.util.Translator;
@@ -62,4 +64,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(Map.of("message", errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(GenericRuntimeException.class)
+    public ResponseEntity<Object> handleGenericRuntimeException(GenericRuntimeException ex) {
+        return new ResponseEntity<>(Map.of("message", List.of(translator.toLocale(ex.getMessage()))),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Object> handleValidationException(ValidationException ex) {
+        return new ResponseEntity<>(Map.of("message", List.of(translator.toLocale(ex.getMessage()))),
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }

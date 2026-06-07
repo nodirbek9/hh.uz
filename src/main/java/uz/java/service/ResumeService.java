@@ -2,16 +2,16 @@ package uz.java.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import uz.java.dto.resume.ResumeRequest;
-import uz.java.dto.resume.ResumeResponse;
+import org.springframework.transaction.annotation.Transactional;
+import uz.java.dto.resume.*;
 import uz.java.entity.employer.Profession;
 import uz.java.entity.jobseeker.*;
 import uz.java.exception.GenericNotFoundException;
-import uz.java.mapper.CertificateMapper;
-import uz.java.mapper.ResumeMapper;
-import uz.java.mapper.SkillMapper;
-import uz.java.mapper.WorkExperienceMapper;
-import uz.java.repository.*;
+import uz.java.mapper.*;
+import uz.java.repository.EducationRepository;
+import uz.java.repository.ProfessionRepository;
+import uz.java.repository.ResumeRepository;
+import uz.java.repository.SkillRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,13 +24,14 @@ public class ResumeService {
     private final ResumeMapper resumeMapper;
     private final CertificateMapper certificateMapper;
     private final SkillMapper skillMapper;
-    private final CertificateRepository certificateRepository;
+    private final CourseMapper courseMapper;
     private final SkillRepository skillRepository;
     private final ProfessionRepository professionRepository;
     private final EducationRepository educationRepository;
     private final WorkExperienceMapper workExperienceMapper;
     private static final String EXCEPTION_MESSAGE = "resume.not.found";
 
+    @Transactional(readOnly = true)
     public ResumeResponse getOne(Long id) {
 
         Resume resume = resumeRepository.findById(id).orElseThrow(
@@ -38,18 +39,32 @@ public class ResumeService {
         );
         ResumeResponse response = resumeMapper.toResponse(resume);
         List<Certificate> certificateList = resume.getCertificateList();
-        List<ResumeResponse.CertificateShortResponse> list = certificateList.stream()
+        List<CertificateShortResponse> list = certificateList.stream()
                         .map(certificateMapper::toShortResponse).toList();
 
         response.setCertificateList(list);
         Set<Skill> skills = resume.getSkills();
-        Set<ResumeResponse.SkillResponse> skillSet = skills.stream()
+        Set<SkillResponse> skillSet = skills.stream()
                 .map(skillMapper::toResponse).collect(Collectors.toSet());
         response.setSkills(skillSet);
 
-        return resumeMapper.toResponse(resume);
+        List<CourseResponse> courses = resume.getCourseList()
+                .stream().map(courseMapper::toResponse).toList();
+        response.setCourseList(courses);
+
+        List<PortfolioResponse> portfolios = resume.getPortfolioList()
+                .stream().map(p -> {
+                    PortfolioResponse pr = new PortfolioResponse();
+                    pr.setId(p.getId());
+                    pr.setImage(p.getImage());
+                    return pr;
+                }).toList();
+        response.setPortfolioList(portfolios);
+
+        return response;
     }
 
+    @Transactional
     public Long create(ResumeRequest request) {
         Profession profession = professionRepository.findById(request.getProfessionId())
                 .orElseThrow(() -> new GenericNotFoundException(EXCEPTION_MESSAGE));
@@ -90,8 +105,8 @@ public class ResumeService {
         return save.getId();
     }
 
+    @Transactional
     public Long update(Long id, ResumeRequest request) {
-        List<Certificate> certificateList = new ArrayList<>();
         Resume resume = resumeRepository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );

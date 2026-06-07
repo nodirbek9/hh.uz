@@ -9,7 +9,7 @@ public class CertificateRequest {
     @NotNull(message = "certificate.name.must.not.be.null")
     private String name;
 
-    @NotNull(message = "received.from.must.not.be.null")
+    @NotNull(message = "received.from.certiface.must.not.be.null")
     private String receivedFrom;
 
     private String contactName;

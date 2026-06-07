@@ -20,5 +20,5 @@ public class Specializations extends Auditable {
     private String name;
 
     @Column(name = "parent_id")
-    private String parentId;
+    private Long parentId;
 }

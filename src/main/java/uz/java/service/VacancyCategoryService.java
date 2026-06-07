@@ -2,6 +2,7 @@ package uz.java.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.java.dto.vacancy.VacancyCategoryRequest;
 import uz.java.dto.vacancy.VacancyCategoryResponse;
 import uz.java.entity.employer.Specializations;
@@ -20,6 +21,7 @@ public class VacancyCategoryService {
 
     private static final String EXCEPTION_MESSAGE = "specializations.not.found";
 
+    @Transactional(readOnly = true)
     public VacancyCategoryResponse getOne(Long id) {
         Specializations category = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
@@ -40,11 +42,13 @@ public class VacancyCategoryService {
         return true;
     }
 
+    @Transactional(readOnly = true)
     public List<VacancyCategoryResponse> getAll() {
         return repository.findAll().stream().
                 filter(c -> !c.isDeleted()).map(mapper::toVacancyCategoryResponse).toList();
     }
 
+    @Transactional
     public Boolean delete(Long id) {
         Specializations category = repository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
@@ -55,6 +59,7 @@ public class VacancyCategoryService {
         return true;
     }
 
+    @Transactional(readOnly = true)
     public VacancyCategoryResponse getByName(String name) {
         Specializations category = repository.findByNameCustom(name);
         return getOne(category.getId());

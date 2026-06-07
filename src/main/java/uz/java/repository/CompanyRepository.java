@@ -1,6 +1,7 @@
 package uz.java.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import uz.java.entity.employer.Company;
 
@@ -9,7 +10,7 @@ import uz.java.entity.employer.Company;
 //ORM ga misollar: Hibernate, JPA, EntityManager, JdbcTemplate
 // JPA bu qolgan ORM lani ustida qurilgan hammasi shundan implementatsiya olgan
 //@Repository // JpaRepository interface ni ustida bean qiladigan anotatsiya bolgani uchun bu repostory class lar ustiga bean qiladigan anotatsiya qoyilmaydi
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
     @Query("select c from Company c where c.name=?1")
     Company findByNomi(String name);
 }

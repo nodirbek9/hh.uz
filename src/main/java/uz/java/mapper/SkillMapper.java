@@ -4,13 +4,13 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import uz.java.dto.resume.ResumeResponse;
 import uz.java.dto.resume.SkillRequest;
+import uz.java.dto.resume.SkillResponse;
 import uz.java.entity.jobseeker.Skill;
 
 @Mapper(componentModel = "spring")
 public interface SkillMapper {
-    ResumeResponse.SkillResponse toResponse(Skill skill);
+    SkillResponse toResponse(Skill skill);
 
     Skill toEntity(SkillRequest request);
 

@@ -1,6 +1,7 @@
 package uz.java.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.java.service.ProfessionService;
 
@@ -14,6 +15,7 @@ public class ProfessionController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping
     public ResponseEntity<?> getProfessions(@RequestParam Integer page,
                                             @RequestParam Integer limit,
@@ -21,6 +23,7 @@ public class ProfessionController {
         return ResponseEntity.ok(service.getAll(page, limit, sortBy));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping("/{parentId}")
     public ResponseEntity<?> getProfessionByParentId(@PathVariable Long parentId){
         return ResponseEntity.ok(service.getProfessionByParentId(parentId));

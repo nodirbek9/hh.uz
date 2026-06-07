@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface WorkExperienceRepository extends JpaRepository<WorkExperience, Long>, JpaSpecificationExecutor<WorkExperience> {
 
-    @Query("select work from WorkExperience work where work.userProfile.id=?1")
-    List<WorkExperience> findByResumeId(Long id);
+    @Query("select w from WorkExperience w where w.resume.id = ?1 and w.deletedAt is null")
+    List<WorkExperience> findByResumeId(Long resumeId);
 
-    @Query("select work from WorkExperience work where work.userProfile.id=?1")
+    @Query("select w from WorkExperience w where w.userProfile.id = ?1 and w.deletedAt is null")
     List<WorkExperience> findByUserProfileId(Long userProfileId);
 }

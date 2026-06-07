@@ -25,6 +25,7 @@ public class VacancyFilter extends BaseFilter {
     List<String> vocational;
     List<String> workingHours;
     List<String> vacancyDisplay;
+    Long specializationId;
 
     public VacancyFilter(Integer page, Integer limit,
                          String sortBy, String search,
@@ -34,7 +35,8 @@ public class VacancyFilter extends BaseFilter {
                          List<Long> companyIndustryIds, List<Long> countryIds,
                          List<Long> cityIds, List<String> salaryFrequency,
                          List<String> vocational, List<String> workingHours,
-                         List<String> vacancyDisplay) {
+                         List<String> vacancyDisplay,
+                         Long specializationId) {
         super(page, limit, sortBy);
         this.search = search;
         this.salaryFrom = salaryFrom;
@@ -50,5 +52,6 @@ public class VacancyFilter extends BaseFilter {
         this.vocational = vocational;
         this.workingHours = workingHours;
         this.vacancyDisplay = vacancyDisplay;
+        this.specializationId = specializationId;
     }
 }

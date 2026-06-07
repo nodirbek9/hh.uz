@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!--    05.13.2026-->
+    <changeSet id="1778550828519-1" author="qayrat">
+        <!-- Programming Languages -->
+        <insert tableName="skills">
+            <column name="name" value="Python"/>
+            <column name="code" value="1001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Java"/>
+            <column name="code" value="1002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="JavaScript"/>
+            <column name="code" value="1003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="C#"/>
+            <column name="code" value="1004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="TypeScript"/>
+            <column name="code" value="1005"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Kotlin"/>
+            <column name="code" value="1006"/>
+        </insert>
+
+        <!-- Frontend -->
+        <insert tableName="skills">
+            <column name="name" value="React"/>
+            <column name="code" value="2001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Angular"/>
+            <column name="code" value="2002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Vue.js"/>
+            <column name="code" value="2003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Next.js"/>
+            <column name="code" value="2004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Tailwind CSS"/>
+            <column name="code" value="2005"/>
+        </insert>
+
+        <!-- Backend -->
+        <insert tableName="skills">
+            <column name="name" value="Spring Boot"/>
+            <column name="code" value="3001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Node.js"/>
+            <column name="code" value="3002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Django"/>
+            <column name="code" value="3003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="FastAPI"/>
+            <column name="code" value="3004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="REST API"/>
+            <column name="code" value="3005"/>
+        </insert>
+
+        <!-- Database -->
+        <insert tableName="skills">
+            <column name="name" value="PostgreSQL"/>
+            <column name="code" value="4001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="MySQL"/>
+            <column name="code" value="4002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="MongoDB"/>
+            <column name="code" value="4003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Redis"/>
+            <column name="code" value="4004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Elasticsearch"/>
+            <column name="code" value="4005"/>
+        </insert>
+
+        <!-- DevOps & Cloud -->
+        <insert tableName="skills">
+            <column name="name" value="Docker"/>
+            <column name="code" value="5001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Kubernetes"/>
+            <column name="code" value="5002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="AWS"/>
+            <column name="code" value="5003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Git"/>
+            <column name="code" value="5004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="CI/CD"/>
+            <column name="code" value="5005"/>
+        </insert>
+
+        <!-- Mobile -->
+        <insert tableName="skills">
+            <column name="name" value="React Native"/>
+            <column name="code" value="6001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Flutter"/>
+            <column name="code" value="6002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Dart"/>
+            <column name="code" value="6003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Android"/>
+            <column name="code" value="6004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="iOS"/>
+            <column name="code" value="6005"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Swift"/>
+            <column name="code" value="6006"/>
+        </insert>
+
+        <!-- Data & AI -->
+        <insert tableName="skills">
+            <column name="name" value="Machine Learning"/>
+            <column name="code" value="7001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Data Analysis"/>
+            <column name="code" value="7002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="TensorFlow"/>
+            <column name="code" value="7003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="PyTorch"/>
+            <column name="code" value="7004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Apache Kafka"/>
+            <column name="code" value="7005"/>
+        </insert>
+
+        <!-- Soft / General -->
+        <insert tableName="skills">
+            <column name="name" value="Agile / Scrum"/>
+            <column name="code" value="8001"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="System Design"/>
+            <column name="code" value="8002"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Unit Testing"/>
+            <column name="code" value="8003"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Project Management"/>
+            <column name="code" value="8004"/>
+        </insert>
+        <insert tableName="skills">
+            <column name="name" value="Technical Writing"/>
+            <column name="code" value="8005"/>
+        </insert>
+    </changeSet>
+    <changeSet id="1778550997870-1" author="nodirbek">
+        <!-- Country -->
+        <insert tableName="cities_of_country">
+            <column name="name" value="O'zbekiston"/>
+        </insert>
+
+        <!-- Regions -->
+        <insert tableName="cities_of_country">
+            <column name="name" value="Toshkent viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Andijon viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Buxoro viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Farg'ona viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Jizzax viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Xorazm viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Namangan viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Navoiy viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Qashqadaryo viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Qoraqalpog'iston Respublikasi"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Samarqand viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Sirdaryo viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Surxondaryo viloyati"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <!-- Main cities -->
+        <insert tableName="cities_of_country">
+            <column name="name" value="Toshkent shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Andijon shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Buxoro shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Farg'ona shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Jizzax shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Urganch"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Namangan shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Navoiy shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Qarshi"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Nukus"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Samarqand shahri"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Guliston"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+
+        <insert tableName="cities_of_country">
+            <column name="name" value="Termiz"/>
+            <column name="parent_id" value="1"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

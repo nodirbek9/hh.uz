@@ -3,6 +3,7 @@ package uz.java.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.java.dto.tag.TagRequest;
 import uz.java.dto.tag.TagResponse;
@@ -17,31 +18,37 @@ public class TagController {
 
     private final TagService tagService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping("/{id}")
     public ResponseEntity<TagResponse> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(tagService.getOne(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'JOB_SEEKER')")
     @PostMapping
     public ResponseEntity<Long> create(@RequestBody TagRequest request){
         return new ResponseEntity<>(tagService.create(request), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'JOB_SEEKER')")
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@PathVariable Long id, @RequestBody TagRequest request) {
         return new ResponseEntity<>(tagService.update(id, request), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping
-    public ResponseEntity<List<TagResponse>> getAll() {
-        return ResponseEntity.ok(tagService.getAll());
+    public ResponseEntity<List<TagResponse>> getAll(@RequestParam String search) {
+        return ResponseEntity.ok(tagService.getAll(search));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'JOB_SEEKER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> delete(@PathVariable Long id) {
         return ResponseEntity.ok(tagService.delete(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping("/get-by-name")
     public ResponseEntity<TagResponse> findByName(@RequestParam String name) {
         return ResponseEntity.ok(tagService.getByName(name));

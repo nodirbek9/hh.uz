@@ -86,4 +86,8 @@ public class Vacancy extends Auditable {
     private Integer viewCount;
 
     private String contactName;
+
+    @ManyToOne
+    @JoinColumn(name = "specialization_id")
+    private Specializations specialization;
 }

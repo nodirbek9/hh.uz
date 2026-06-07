@@ -2,6 +2,7 @@ package uz.java.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.java.dto.tag.TagRequest;
 import uz.java.dto.tag.TagResponse;
 import uz.java.entity.employer.Tag;
@@ -20,7 +21,7 @@ public class TagService {
     private final TagMapper tagMapper;
     private static final String EXCEPTION_MESSAGE = "tag.not.found";
 
-
+    @Transactional(readOnly = true)
     public TagResponse getOne(Long id) {
         Optional<Tag> tagById = tagRepository.findById(id);
 
@@ -46,12 +47,12 @@ public class TagService {
         return true;
     }
 
-    public List<TagResponse> getAll() {
-        return tagRepository.findAll().stream().filter(
-                        t -> !t.isDeleted())
-                .map(tagMapper::toTagResponse).toList();
+    @Transactional(readOnly = true)
+    public List<TagResponse> getAll(String search) {
+        return tagRepository.findAllCustom(search);
     }
 
+    @Transactional
     public Boolean delete(Long id) {
         Tag tag = tagRepository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
@@ -60,7 +61,7 @@ public class TagService {
         tagRepository.save(tag);
         return true;
     }
-
+    @Transactional(readOnly = true)
     public TagResponse getByName(String name) {
         Tag tag = tagRepository.findByTagName(name);
         return getOne(tag.getId());

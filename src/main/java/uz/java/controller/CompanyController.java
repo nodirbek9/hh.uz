@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.java.dto.company.CompanyFilter;
 import uz.java.dto.company.CompanyRequest;
 import uz.java.dto.company.CompanyResponse;
 import uz.java.service.CompanyService;
@@ -32,32 +34,60 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','JOB_SEEKER','EMPLOYER')")
     public ResponseEntity<CompanyResponse> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(companyService.getOne(id));
     }
     // ResponseEntity class bu response ni wrap qilib uni Front tarafga statusCode, status, body si ga ajratib yuboradi
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER')")
     public ResponseEntity<Long> create(@RequestBody @Valid CompanyRequest request) {
         return new ResponseEntity<>(companyService.create(request), HttpStatus.CREATED);
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Boolean> update(@PathVariable Long id, @RequestBody CompanyRequest request){
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER')")
+    public ResponseEntity<Boolean> update(@PathVariable Long id, @RequestBody CompanyRequest request) {
         return new ResponseEntity<>(companyService.update(id, request), HttpStatus.OK);
     }
+
+    //    Long id;
+//    String name;
+//    Long ownerId;
+//    String description;
+//    String logo;
+//    String country;
+//    String city;
+//    String phone;
+//    String email;
+//    List<String> imageUrls;
     @GetMapping
-    public ResponseEntity<List<CompanyResponse>> getAll(){
-        return ResponseEntity.ok(companyService.getAll());
+    @PreAuthorize("hasAnyRole('ADMIN','JOB_SEEKER','EMPLOYER')")
+    public ResponseEntity<List<CompanyResponse>> getAll(@RequestParam Integer page,
+                                                        @RequestParam Integer limit,
+                                                        @RequestParam String sortBy,
+                                                        @RequestParam(required = false) String name,
+                                                        @RequestParam(required = false) String description,
+                                                        @RequestParam(required = false) String country,
+                                                        @RequestParam(required = false) String city,
+                                                        @RequestParam(required = false) String phone,
+                                                        @RequestParam(required = false) String email
+    ) {
+        return ResponseEntity.ok(companyService.getAll(
+                new CompanyFilter(page, limit, sortBy, name, description, country, city, phone, email)
+        ));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Long id){
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER')")
+    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
         return ResponseEntity.ok(companyService.delete(id));
     }
 
     @GetMapping("/get-by-name")
-    public ResponseEntity<CompanyResponse> findByName(@RequestParam String name){
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER')")
+    public ResponseEntity<CompanyResponse> findByName(@RequestParam String name) {
         return ResponseEntity.ok(companyService.getByName(name));
     }
-
 }

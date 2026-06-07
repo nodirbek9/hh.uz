@@ -9,9 +9,12 @@ import uz.java.entity.employer.Vacancy;
 public interface VacancyMapper {
 
     @Mapping(source = "company.id", target = "companyId")
+    @Mapping(source = "specialization.id", target = "specializationId")
+    @Mapping(source = "specialization.name", target = "specializationName")
     VacancyResponse toVacancyResponse(Vacancy vacancy);
 
     @Mapping(source = "companyId", target = "company.id")
+    @Mapping(source = "specializationId", target = "specialization.id")
     Vacancy toVacancy(VacancyRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

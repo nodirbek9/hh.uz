@@ -1,10 +1,12 @@
 package uz.java.entity.employer;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.java.entity.user.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,11 +14,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "company_industry")
-public class CompanyIndustry {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CompanyIndustry extends Auditable {
 
     private String name;
 

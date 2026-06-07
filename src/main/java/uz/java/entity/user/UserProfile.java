@@ -17,11 +17,12 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Table(name = "userProfiles")
+@Table(name = "user_profiles")
 public class UserProfile extends Auditable{
 
+    @OneToOne
     @Column(name = "user_id")
-    private Long userId;
+    private User user;
 
     private String avatar;
 
