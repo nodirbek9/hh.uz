@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+
+  app:
+    build: .
+    container_name: hh-web-app
+    ports:
+      - "7777:7777"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/hh_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1111
+    networks:
+      - hh_web_app-net
+    depends_on:
+        - redis
+  redis:
+    image: redis:latest
+    container_name: redis_hh
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redis_data:/data
+    networks:
+      - hh_web_app-net
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    platform: linux/amd64
+    container_name: redis-commander
+    ports:
+      - "9091:9091"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=12345
+    depends_on:
+      - redis
+    networks:
+      - hh_web_app-net
+  minio-hh:
+    image: quay.io/minio/minio
+    container_name: minio-hh
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: admin_username
+      MINIO_ROOT_PASSWORD: adminpassword123
+    command: server /data --console-address ":9001"
+    networks:
+      - hh_web_app-net
+volumes:
+  redis_data:
+  minio_data:
+
+networks:
+  hh_web_app-net:
+    driver: bridge
