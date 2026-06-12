@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.java.dto.cache.ApiResponse;
 import uz.java.dto.tag.TagRequest;
 import uz.java.dto.tag.TagResponse;
 import uz.java.service.TagService;
@@ -38,7 +39,7 @@ public class TagController {
 
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping
-    public ResponseEntity<List<TagResponse>> getAll(@RequestParam String search) {
+    public ResponseEntity<ApiResponse<List<TagResponse>>> getAll(@RequestParam String search) {
         return ResponseEntity.ok(tagService.getAll(search));
     }
 

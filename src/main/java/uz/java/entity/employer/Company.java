@@ -31,7 +31,9 @@ public class Company extends Auditable {
 
     private String logo;
 
-    private Long cityId;
+    private String city;
+
+    private String country;
 
     @Column(length = 13)
     private String phone;

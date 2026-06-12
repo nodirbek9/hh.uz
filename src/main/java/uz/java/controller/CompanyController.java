@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.java.dto.cache.ApiResponse;
 import uz.java.dto.company.CompanyFilter;
 import uz.java.dto.company.CompanyRequest;
 import uz.java.dto.company.CompanyResponse;
@@ -64,7 +65,7 @@ public class CompanyController {
 //    List<String> imageUrls;
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','JOB_SEEKER','EMPLOYER')")
-    public ResponseEntity<List<CompanyResponse>> getAll(@RequestParam Integer page,
+    public ResponseEntity<ApiResponse<List<CompanyResponse>>> getAll(@RequestParam Integer page,
                                                         @RequestParam Integer limit,
                                                         @RequestParam String sortBy,
                                                         @RequestParam(required = false) String name,

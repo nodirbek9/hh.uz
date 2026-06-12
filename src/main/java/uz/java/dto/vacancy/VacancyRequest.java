@@ -24,5 +24,5 @@ public class VacancyRequest {
     String city;
     Integer salary;
     String currency;
-    private Long specializationId;
+    Long specializationId;
 }

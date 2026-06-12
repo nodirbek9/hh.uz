@@ -3,13 +3,17 @@ package uz.java.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.java.dto.cache.ApiResponse;
+import uz.java.dto.cache.CacheDto;
 import uz.java.dto.notification.NotificationResponse;
 import uz.java.entity.notification.Notification;
 import uz.java.entity.user.User;
 import uz.java.exception.GenericNotFoundException;
 import uz.java.exception.InvalidDataException;
+import uz.java.exception.RedisNotSerializableException;
 import uz.java.repository.NotificationRepository;
 import uz.java.repository.UserRepository;
+import uz.java.util.CachePrefix;
 
 import java.util.List;
 
@@ -18,11 +22,22 @@ import java.util.List;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final CacheManagerService cacheManagerService;
 
     @Transactional(readOnly = true)
-    public List<NotificationResponse> getMyNotifications(Long userId) {
-        return notificationRepository.findByUserId(userId)
+    public ApiResponse<List<NotificationResponse>> getMyNotifications(Long userId) {
+        Object data = cacheManagerService.get(userId.toString(), CachePrefix.NOTIFICATION);
+        if (data != null)
+            return (ApiResponse<List<NotificationResponse>>) data;
+
+        List<NotificationResponse> list = notificationRepository.findByUserId(userId)
                 .stream().map(this::toResponse).toList();
+        try {
+            cacheManagerService.put(userId.toString(), CachePrefix.NOTIFICATION, new ApiResponse<>(list));
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
+        return new ApiResponse<>(list);
     }
 
     @Transactional
@@ -33,6 +48,7 @@ public class NotificationService {
             throw new InvalidDataException("access.denied");
         notification.setIsRead(true);
         notificationRepository.save(notification);
+        cacheManagerService.delete(CachePrefix.NOTIFICATION);
         return true;
     }
 
@@ -44,6 +60,7 @@ public class NotificationService {
             throw new InvalidDataException("access.denied");
         notification.makeAsDeleted();
         notificationRepository.save(notification);
+        cacheManagerService.delete(CachePrefix.NOTIFICATION);
         return true;
     }
 
@@ -59,6 +76,7 @@ public class NotificationService {
         notification.setMessage(message);
         notification.setIsRead(false);
         notificationRepository.save(notification);
+        cacheManagerService.delete(CachePrefix.NOTIFICATION);
     }
 
     private NotificationResponse toResponse(Notification n) {

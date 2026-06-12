@@ -24,13 +24,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-//    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.liquibase:liquibase-core")
-    implementation("io.minio:minio:8.5.4")
-//    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-//    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("com.auth0:java-jwt:3.18.2")
+    // redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("redis.clients:jedis")
+
+    //minio
+    implementation("io.minio:minio:8.5.4")
+    implementation("org.apache.commons:commons-lang3:3.14.0")
 
     //Keyclok
     implementation("org.keycloak:keycloak-admin-client:26.0.6")
@@ -43,11 +49,7 @@ dependencies {
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-    implementation("org.apache.commons:commons-lang3:3.14.0")
-    implementation("redis.clients:jedis")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-
-
+    // restTemplate
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")

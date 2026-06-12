@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import uz.java.exception.GenericNotFoundException;
 import uz.java.exception.GenericRuntimeException;
 import uz.java.exception.InvalidDataException;
+import uz.java.exception.RedisNotSerializableException;
 import uz.java.util.ErrorUtil;
 import uz.java.util.Translator;
 
@@ -32,6 +33,13 @@ public class GlobalExceptionHandler {
         log.error("GenericNotFoundException on: {}", ErrorUtil.getStacktrace(ex));
         return new ResponseEntity<>(Map.of("message", List.of(translator.toLocale(ex.getMessage()))),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RedisNotSerializableException.class)
+    public ResponseEntity<Object> handleRedisNotSerializableException(RedisNotSerializableException ex) {
+        log.error("RedisNotSerializableException on: {}", ErrorUtil.getStacktrace(ex));
+        return new ResponseEntity<>(Map.of("message", translator.toLocale(ex.getMessage())),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

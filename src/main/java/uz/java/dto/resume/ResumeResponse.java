@@ -13,6 +13,7 @@ public class ResumeResponse {
     String profession;
     String status;
     String aboutMe;
+    String photoPath;
     List<CertificateShortResponse> certificateList = new ArrayList<>();
     Set<SkillResponse> skills = new HashSet<>();
     List<CourseResponse> courseList = new ArrayList<>();

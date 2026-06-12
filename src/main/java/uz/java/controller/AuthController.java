@@ -1,14 +1,13 @@
 package uz.java.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.java.config.CustomUserDetails;
+import uz.java.dto.auth.RegisterRequest;
 import uz.java.dto.auth.TokenResponse;
 import uz.java.service.AuthService;
 
@@ -23,6 +22,12 @@ public class AuthController {
     public ResponseEntity<TokenResponse> login(@RequestParam String username, @RequestParam String password) {
         return ResponseEntity.ok(service.login(username, password));
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<TokenResponse> register(@RequestBody @Valid RegisterRequest request) {
+        return ResponseEntity.ok(service.register(request));
+    }
+
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(@RequestParam String refreshToken) {

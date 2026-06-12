@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.java.dto.application.ApplicationRequest;
 import uz.java.dto.application.ApplicationResponse;
 import uz.java.dto.application.ApplicationStatusRequest;
+import uz.java.dto.cache.ApiResponse;
+import uz.java.dto.cache.CacheDto;
 import uz.java.entity.application.ApplicationStatusHistory;
 import uz.java.entity.application.VacancyApplication;
 import uz.java.entity.employer.Vacancy;
@@ -14,10 +16,12 @@ import uz.java.entity.jobseeker.Resume;
 import uz.java.entity.user.User;
 import uz.java.exception.GenericNotFoundException;
 import uz.java.exception.InvalidDataException;
+import uz.java.exception.RedisNotSerializableException;
 import uz.java.repository.ResumeRepository;
 import uz.java.repository.UserRepository;
 import uz.java.repository.VacancyApplicationRepository;
 import uz.java.repository.VacancyRepository;
+import uz.java.util.CachePrefix;
 
 import java.util.List;
 
@@ -30,6 +34,7 @@ public class VacancyApplicationService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final CacheManagerService cacheManagerService;
 
     @Transactional
     public Long apply(ApplicationRequest request, Long userId) {
@@ -51,6 +56,7 @@ public class VacancyApplicationService {
         application.setStatus(VacancyApplicationStatus.SEND);
 
         VacancyApplication saved = applicationRepository.save(application);
+        cacheManagerService.delete(CachePrefix.APPLICATION);
 
         Long employerUserId = vacancy.getCompany().getUser().getId();
         notificationService.send(
@@ -64,21 +70,51 @@ public class VacancyApplicationService {
 
     @Transactional(readOnly = true)
     public ApplicationResponse getOne(Long id) {
+        Object data = cacheManagerService.get(id.toString(), CachePrefix.APPLICATION);
+        if (data != null)
+            return (ApplicationResponse) data;
+
         VacancyApplication application = applicationRepository.findById(id)
                 .orElseThrow(() -> new GenericNotFoundException("application.not.found"));
-        return toResponse(application);
+        ApplicationResponse response = toResponse(application);
+        try {
+            cacheManagerService.put(id.toString(), CachePrefix.APPLICATION, response);
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
+        return response;
     }
 
     @Transactional(readOnly = true)
-    public List<ApplicationResponse> getMyApplication(Long userId) {
-        return applicationRepository.findByUserId(userId)
+    public ApiResponse<List<ApplicationResponse>> getMyApplication(Long userId) {
+        Object data = cacheManagerService.get("user_" + userId, CachePrefix.APPLICATION);
+        if (data != null) {
+            return (ApiResponse<List<ApplicationResponse>>) data;
+        }
+        List<ApplicationResponse> response = applicationRepository.findByUserId(userId)
                 .stream().map(this::toResponse).toList();
+        try {
+            cacheManagerService.put("user_" + userId, CachePrefix.APPLICATION, new ApiResponse<>(response));
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
+        return new ApiResponse<>(response);
     }
 
     @Transactional(readOnly = true)
-    public List<ApplicationResponse> getByVacancy(Long vacancyId) {
-        return applicationRepository.findByVacancyId(vacancyId)
+    public ApiResponse<List<ApplicationResponse>> getByVacancy(Long vacancyId) {
+        Object data = cacheManagerService.get("vacancy_" + vacancyId, CachePrefix.APPLICATION);
+        if (data != null) {
+            return (ApiResponse<List<ApplicationResponse>>) data;
+        }
+        List<ApplicationResponse> response = applicationRepository.findByVacancyId(vacancyId)
                 .stream().map(this::toResponse).toList();
+        try {
+            cacheManagerService.put("vacancy_" + vacancyId, CachePrefix.APPLICATION, new ApiResponse<>(response));
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
+        return new ApiResponse<>(response);
     }
 
     @Transactional
@@ -94,6 +130,7 @@ public class VacancyApplicationService {
 
         app.setStatus(request.getStatus());
         applicationRepository.save(app);
+        cacheManagerService.delete(CachePrefix.APPLICATION);
         return true;
     }
 

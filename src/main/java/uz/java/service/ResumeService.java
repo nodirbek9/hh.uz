@@ -3,15 +3,19 @@ package uz.java.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.java.dto.cache.ApiResponse;
+import uz.java.dto.cache.CacheDto;
 import uz.java.dto.resume.*;
 import uz.java.entity.employer.Profession;
 import uz.java.entity.jobseeker.*;
 import uz.java.exception.GenericNotFoundException;
+import uz.java.exception.RedisNotSerializableException;
 import uz.java.mapper.*;
 import uz.java.repository.EducationRepository;
 import uz.java.repository.ProfessionRepository;
 import uz.java.repository.ResumeRepository;
 import uz.java.repository.SkillRepository;
+import uz.java.util.CachePrefix;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,10 +33,14 @@ public class ResumeService {
     private final ProfessionRepository professionRepository;
     private final EducationRepository educationRepository;
     private final WorkExperienceMapper workExperienceMapper;
+    private final CacheManagerService cacheManagerService;
     private static final String EXCEPTION_MESSAGE = "resume.not.found";
 
     @Transactional(readOnly = true)
     public ResumeResponse getOne(Long id) {
+        Object data = cacheManagerService.get(id.toString(), CachePrefix.RESUME);
+        if (data != null)
+            return (ResumeResponse) data;
 
         Resume resume = resumeRepository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
@@ -61,6 +69,11 @@ public class ResumeService {
                 }).toList();
         response.setPortfolioList(portfolios);
 
+        try {
+            cacheManagerService.put(id.toString(), CachePrefix.RESUME, response);
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
         return response;
     }
 
@@ -102,6 +115,7 @@ public class ResumeService {
         resume.setWorkExperienceList(workExperiences);
 
         Resume save = resumeRepository.save(resume);
+        cacheManagerService.delete(CachePrefix.RESUME);
         return save.getId();
     }
 
@@ -141,6 +155,18 @@ public class ResumeService {
 
         resumeMapper.updateFromRequest(request, resume);
         resumeRepository.save(resume);
+        cacheManagerService.delete(CachePrefix.RESUME);
         return id;
+    }
+
+    @Transactional
+    public Boolean delete(Long id) {
+        Resume resume = resumeRepository.findById(id).orElseThrow(
+                () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
+        );
+        resume.makeAsDeleted();
+        resumeRepository.save(resume);
+        cacheManagerService.delete(CachePrefix.RESUME);
+        return true;
     }
 }
