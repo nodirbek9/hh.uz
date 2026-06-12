@@ -26,10 +26,27 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 //    developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.liquibase:liquibase-core")
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.minio:minio:8.5.4")
+//    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+//    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("com.auth0:java-jwt:3.18.2")
+
+    //Keyclok
+    implementation("org.keycloak:keycloak-admin-client:26.0.6")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
+
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    implementation("org.apache.commons:commons-lang3:3.14.0")
+    implementation("redis.clients:jedis")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
 
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")

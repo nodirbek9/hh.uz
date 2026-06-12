@@ -2,19 +2,55 @@ version: '3.8'
 
 services:
 
-  app:
-    build: .
-    container_name: hh-web-app
-    ports:
-      - "7777:7777"
+#  app:
+#    build: .
+#    container_name: hh-web-app
+#    ports:
+#      - "7777:7777"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/hh_db
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: 1111
+#    networks:
+#      - hh_web_app-net
+#    depends_on:
+#        - redis
+  keycloak-db:
+    image: postgres:17
+    container_name: keycloak-db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/hh_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1111
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - "5433:5432"
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
     networks:
       - hh_web_app-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak
+    command: >
+      start-dev
+      --features=token-exchange
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: keycloakAdmin
+      KEYCLOAK_ADMIN_PASSWORD: keycloakAdmin@1234
+      KC_HOSTNAME: localhost
+      KC_HTTP_ENABLED: true
+    ports:
+      - "8080:8080"
     depends_on:
-        - redis
+      - keycloak-db
+    networks:
+      - hh_web_app-net
   redis:
     image: redis:latest
     container_name: redis_hh
@@ -57,6 +93,7 @@ services:
 volumes:
   redis_data:
   minio_data:
+  keycloak_db_data:
 
 networks:
   hh_web_app-net:
