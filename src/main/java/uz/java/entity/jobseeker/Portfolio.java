@@ -23,4 +23,6 @@ public class Portfolio extends Auditable {
     private Resume resume;
 
     private String image;
+
+    private String fileUrl;
 }

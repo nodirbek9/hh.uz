@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.java.dto.cache.ApiResponse;
 import uz.java.dto.vacancy.VacancyCategoryRequest;
 import uz.java.dto.vacancy.VacancyCategoryResponse;
 import uz.java.service.VacancyCategoryService;
@@ -38,7 +39,7 @@ public class VacancyCategoryController {
 
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
     @GetMapping
-    public ResponseEntity<List<VacancyCategoryResponse>> getAll() {
+    public ResponseEntity<ApiResponse<List<VacancyCategoryResponse>>> getAll() {
         return ResponseEntity.ok(vacancyCategoryService.getAll());
     }
 

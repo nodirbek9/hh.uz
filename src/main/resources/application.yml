@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   application:
     name: hh-web-app
 
@@ -8,24 +12,28 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/hh_db
+    url: jdbc:postgresql://host.docker.internal:5432/hh_db
     username: postgres
     password: 1111
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
+  data:
+    redis:
+      port: 6379
+      host: redis
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: public
     liquibase-schema: hh_db_liquibase_schema
-    enabled: true
+    enabled: false
     contexts: development
     drop-first: false
 
 server:
-  port: 7070
+  port: 7777
 
 jwt:
   token:
@@ -38,6 +46,16 @@ auth:
     - /auth/refresh
     - /locations/countries
     - /locations/cities
-    - /professions
     - /vacancyCategories
-kind: Application
+    - /files/upload/avatar
+    - /error
+minio:
+  endpoint: http://minio-hh:9000
+  accessKey: ${MINIO_ROOT_USER:admin_username}
+  secretKey: ${MINIO_ROOT_PASSWORD:adminpassword123}
+project:
+  upload:
+    path:
+      default-bucket: java-team
+root:
+  path: home/files/

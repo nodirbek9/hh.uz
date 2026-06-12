@@ -16,4 +16,6 @@ public class CertificateRequest {
 
     @NotNull(message = "resume.id.must.not.be.null")
     private Long resumeId;
+    
+    private String filePath;
 }

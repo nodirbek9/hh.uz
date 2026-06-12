@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.java.dto.cache.ApiResponse;
 import uz.java.dto.vacancy.VacancyFilter;
 import uz.java.dto.vacancy.VacancyRequest;
 import uz.java.dto.vacancy.VacancyResponse;
@@ -40,7 +41,7 @@ public class VacancyController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','JOB_SEEKER')")
-    public ResponseEntity<List<VacancyResponse>> getAll(@RequestParam Integer page,
+    public ResponseEntity<ApiResponse<List<VacancyResponse>>> getAll(@RequestParam Integer page,
                                                         @RequestParam Integer limit,
                                                         @RequestParam String sortBy,
                                                         @RequestParam(required = false) String search,

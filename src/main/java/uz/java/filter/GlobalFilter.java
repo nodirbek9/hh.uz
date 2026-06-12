@@ -48,20 +48,29 @@ public class GlobalFilter extends OncePerRequestFilter {
         long start = System.currentTimeMillis(); // hosirgi vaqtni long tipida oladi
         String requestUri = request.getRequestURI();
         log.info("getting request URI: " + requestUri);
+        log.info("isOpenPath: {}", isOpenPath(requestUri));
         if (!isOpenPath(requestUri)) {
             try {
+                log.info("Attempting to extract token from request");
                 String token = getTokenFromRequest(request);
+                log.info("Token extracted: {}", token != null ? "YES (length: " + token.length() + ")" : "NO");
                 if (jwtTokenService.isValid(token)) {
+                    log.info("Token is valid");
                     String username = jwtTokenService.subject(token);
+                    log.info("Username from token: {}", username);
                     CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(username);
                     authenticate(request, customUserDetails);
                     log.info("User authenticated by id: {}", customUserDetails.getUserId());
+                } else {
+                    log.error("Token is INVALID");
                 }
             } catch (GenericRuntimeException | AccessDeniedException | InvalidDataException e) {
-                log.error("Global filter error", e);
+                log.error("Global filter error: {}", e.getMessage(), e);
                 resolver.resolveException(request, response, null, e);
                 return;
             }
+        } else {
+            log.info("Path is in whitelist, skipping authentication");
         }
         setLang(request, response);
         filterChain.doFilter(request, response);
@@ -79,8 +88,8 @@ public class GlobalFilter extends OncePerRequestFilter {
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(ApiConstants.HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.trim().substring(7);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
         } else {
             throw new InvalidDataException("token.is.null");
         }
@@ -93,6 +102,6 @@ public class GlobalFilter extends OncePerRequestFilter {
 
     private void setLang(HttpServletRequest request, HttpServletResponse response) {
         String header = request.getHeader(ApiConstants.LANG);
-        localeResolver.setLocale(request, response, new Locale(Objects.requireNonNullElse(header, ApiConstants.DEFAULT_LANG)));
+//        localeResolver.setLocale(request, response, new Locale(Objects.requireNonNullElse(header, ApiConstants.DEFAULT_LANG)));
     }
 }

@@ -10,4 +10,6 @@ public class PortfolioRequest {
     private Long resumeId;
     @NotBlank
     private String image;
+
+    private String fileUrl;
 }

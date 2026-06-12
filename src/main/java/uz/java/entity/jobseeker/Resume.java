@@ -35,6 +35,9 @@ public class Resume extends Auditable {
     @Column(name = "about_me")
     private String aboutMe;
 
+    @Column(name = "photo_path", length = 500)
+    private String photoPath;
+
     @OneToMany(mappedBy = "resume")
     // faqat OneToMany boglanishda 2 ta turi bor Bidirectional va Unidirectional boglanishlar
     private List<Certificate> certificateList = new ArrayList<>();

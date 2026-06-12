@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import uz.java.config.CustomUserDetails;
+import uz.java.dto.cache.ApiResponse;
 import uz.java.dto.notification.NotificationResponse;
 import uz.java.service.NotificationService;
 
@@ -20,7 +21,7 @@ public class NotificationController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<NotificationResponse>> getMyNotifications(
+    public ResponseEntity<ApiResponse<List<NotificationResponse>>> getMyNotifications(
             @AuthenticationPrincipal CustomUserDetails principal) {
         return ResponseEntity.ok(service.getMyNotifications(principal.getUserId()));
     }

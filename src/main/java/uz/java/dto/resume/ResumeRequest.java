@@ -23,6 +23,7 @@ public class ResumeRequest {
     private List<SkillDto> skillIds = new ArrayList<>();
     private List<WorkExperienceDto> workExperienceIds = new ArrayList<>();
     private ResumeCreationType type;
+    private String photoPath;
 
     @Data
     public static class SkillDto {

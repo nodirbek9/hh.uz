@@ -29,7 +29,7 @@ public class WorkExperience extends Auditable {
     @Column(name = "company_name")
     private String companyName;
 
-    @Column(name = "job_tile")
+    @Column(name = "job_title")
     private String jobTitle;
 
     private String description;

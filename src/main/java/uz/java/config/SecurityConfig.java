@@ -76,7 +76,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:7070", "http://localhost:3001", "https://hh.uz"));
+        config.setAllowedOrigins(List.of("http://localhost:7070", "http://localhost:7777", "http://localhost:3001", "https://hh.uz"));
         config.addAllowedHeader("*");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         source.registerCorsConfiguration("/**", config);

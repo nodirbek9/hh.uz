@@ -11,6 +11,7 @@ import uz.java.config.CustomUserDetails;
 import uz.java.dto.application.ApplicationRequest;
 import uz.java.dto.application.ApplicationResponse;
 import uz.java.dto.application.ApplicationStatusRequest;
+import uz.java.dto.cache.ApiResponse;
 import uz.java.service.VacancyApplicationService;
 
 import java.util.List;
@@ -38,14 +39,14 @@ public class VacancyApplicationController {
 
     @GetMapping("/my")
     @PreAuthorize("hasRole('JOB_SEEKER')")
-    public ResponseEntity<List<ApplicationResponse>> getMyApplications(
+    public ResponseEntity<ApiResponse<List<ApplicationResponse>>> getMyApplications(
             @AuthenticationPrincipal CustomUserDetails principal) {
         return ResponseEntity.ok(service.getMyApplication(principal.getUserId()));
     }
 
     @GetMapping("/vacancy/{vacancyId}")
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER')")
-    public ResponseEntity<List<ApplicationResponse>> getByVacancy(@PathVariable Long vacancyId) {
+    public ResponseEntity<ApiResponse<List<ApplicationResponse>>> getByVacancy(@PathVariable Long vacancyId) {
         return ResponseEntity.ok(service.getByVacancy(vacancyId));
     }
 

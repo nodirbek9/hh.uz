@@ -21,7 +21,7 @@ import java.util.Set;
 public class UserProfile extends Auditable{
 
     @OneToOne
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     private String avatar;

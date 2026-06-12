@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 public class CompanyRequest {
      String name;
      String description;
+     String logo;
      String country;
      String city;
      String phoneNumber;

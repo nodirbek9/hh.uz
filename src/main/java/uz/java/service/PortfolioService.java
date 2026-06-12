@@ -19,6 +19,7 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final ResumeRepository resumeRepository;
+    private final MinioService minioService;
 
     @Transactional
     public Long create(PortfolioRequest request) {
@@ -27,6 +28,7 @@ public class PortfolioService {
         Portfolio portfolio = new Portfolio();
         portfolio.setResume(resume);
         portfolio.setImage(request.getImage());
+        portfolio.setFileUrl(request.getFileUrl());
         return portfolioRepository.save(portfolio).getId();
     }
 
@@ -38,6 +40,7 @@ public class PortfolioService {
                     r.setId(p.getId());
                     r.setResumeId(p.getResume().getId());
                     r.setImage(p.getImage());
+                    r.setFileUrl(p.getFileUrl());
                     return r;
                 }).toList();
     }

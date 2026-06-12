@@ -3,16 +3,21 @@ package uz.java.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.java.dto.cache.ApiResponse;
+import uz.java.dto.cache.CacheDto;
 import uz.java.dto.company.CompanyFilter;
 import uz.java.dto.company.CompanyRequest;
 import uz.java.dto.company.CompanyResponse;
+import uz.java.dto.resume.CertificateShortResponse;
 import uz.java.entity.employer.Company;
 import uz.java.exception.GenericNotFoundException;
 import uz.java.exception.InvalidDataException;
+import uz.java.exception.RedisNotSerializableException;
 import uz.java.mapper.CompanyMapper;
 import uz.java.repository.CompanyRepository;
 import uz.java.specifications.CompanySpecification;
 import uz.java.specifications.SearchSpecification;
+import uz.java.util.CachePrefix;
 
 import java.util.List;
 
@@ -23,15 +28,25 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private static final String EXCEPTION_MESSAGE = "company.not.found";
+    private final CacheManagerService cacheManagerService;
 
     @Transactional(readOnly = true)
     public CompanyResponse getOne(Long id) {
+        Object data = cacheManagerService.get(id.toString(), CachePrefix.COMPANY);
+        if (data != null)
+            return (CompanyResponse) data;
+
         Company company = companyRepository.findById(id).orElseThrow(
                 () -> new GenericNotFoundException(EXCEPTION_MESSAGE)
         );
-        // Optional class bu NullPointerException dan qochish uchun ishlatiladi, obyektni wrap qiladigan class
-//        this class handles null object without throw NullPointerException
-        return companyMapper.toResponse(company);
+        CompanyResponse response = companyMapper.toResponse(company);
+
+        try {
+            cacheManagerService.put(id.toString(), CachePrefix.COMPANY, response);
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
+        return response;
     }
 
     @Transactional
@@ -40,8 +55,9 @@ public class CompanyService {
             throw new InvalidDataException("invalid.email");
         }
         Company company = companyMapper.toCompany(request);
-        Company saved = companyRepository.save(company);
-        return saved.getId();
+        Long id = companyRepository.save(company).getId();
+        cacheManagerService.delete(CachePrefix.COMPANY);
+        return id;
     }
 
     @Transactional
@@ -51,16 +67,27 @@ public class CompanyService {
         );
         companyMapper.updateFromRequest(request, company);
         companyRepository.save(company);
+        cacheManagerService.delete(CachePrefix.COMPANY);
         return true;
     }
 
     @Transactional(readOnly = true)
-    public List<CompanyResponse> getAll(CompanyFilter filter) {
+    public ApiResponse<List<CompanyResponse>> getAll(CompanyFilter filter) {
+        Object data = cacheManagerService.get(String.valueOf(filter.hashCode()), CachePrefix.COMPANY);
+        if (data != null) {
+            return (ApiResponse<List<CompanyResponse>>) data;
+        }
         CompanySpecification spec = new CompanySpecification(filter);
-        return companyRepository.findAll(spec, SearchSpecification.getPageable(filter.getPage(),
+        List<CompanyResponse> response = companyRepository.findAll(spec, SearchSpecification.getPageable(filter.getPage(),
                         filter.getLimit(), filter.getSortBy())).stream()
                 .filter(c -> !c.isDeleted())
                 .map(companyMapper::toResponse).toList();
+        try {
+            cacheManagerService.put(String.valueOf(filter.hashCode()), CachePrefix.COMPANY, new ApiResponse<>(response));
+        } catch (Exception e) {
+            throw new RedisNotSerializableException(e.getMessage());
+        }
+        return new ApiResponse<>(response);
     }
 
     @Transactional
@@ -74,6 +101,7 @@ public class CompanyService {
         // soft delete
         company.makeAsDeleted();
         companyRepository.save(company);
+        cacheManagerService.delete(CachePrefix.COMPANY);
         return true;
     }
 

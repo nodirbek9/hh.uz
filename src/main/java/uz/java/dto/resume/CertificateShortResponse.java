@@ -18,4 +18,6 @@ public class CertificateShortResponse {
     private String contactName;
 
     private LocalDate issueAt;
+
+    private String filePath;
 }

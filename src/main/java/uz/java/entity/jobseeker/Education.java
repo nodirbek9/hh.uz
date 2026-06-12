@@ -21,6 +21,10 @@ public class Education extends Auditable {
     @JoinColumn(name = "user_profile_id")
     private UserProfile userProfile;
 
+    @ManyToOne
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
+
     private String name;
 
     @Enumerated(EnumType.STRING)
