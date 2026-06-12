@@ -14,10 +14,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    change-log: classpath:changelog/db.changelog-master.xml
     default-schema: public
     liquibase-schema: hh_db_liquibase_schema
     enabled: true
@@ -47,6 +47,6 @@ app:
     master-realm: master
     realm: hh-web-app
     keycloak-server-url: http://localhost:8080
-    client-id: hh-web-cli
+    client-id: hh-cli
     admin-client-id: admin-cli
-    client-secret: cNXjqzBpCxJ1ONmxfMFsq0LE0Kcjjs5R
+    client-secret: cz9AO1Wwc32j0IqeRxpb3EBnCqRH0XgN
