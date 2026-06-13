@@ -1,11 +1,13 @@
 package uz.java.mapper;
 
 import org.mapstruct.Mapper;
-import uz.java.dto.auth.RegisterRequest;
-import uz.java.entity.user.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User toUser(RegisterRequest request);
+//    @Mapping(target = "password", ignore = true)
+//    @Mapping(target = "role", ignore = true)
+//    @Mapping(target = "keycloakId", ignore = true)
+//    @Mapping(target = "status", ignore = true)
+//    User toEntity(UserRequest request);
 }

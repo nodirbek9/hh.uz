@@ -6,6 +6,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <!-- Insert initial data (skills, cities) -->
-    <include file="db/changelog/db.changelog-insert-data.xml"/>
+<!--    <include file="db/changelog/db.changelog-insert-data.xml"/>-->
 
 </databaseChangeLog>

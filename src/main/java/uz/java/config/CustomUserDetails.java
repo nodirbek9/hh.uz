@@ -15,7 +15,6 @@ import java.util.Set;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    @Getter
     private final User user;
     private final Set<GrantedAuthority> authorities;
 
@@ -26,12 +25,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return "";
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return "";
     }
 
     public Long getUserId() {

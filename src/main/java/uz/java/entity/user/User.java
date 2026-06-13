@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import uz.java.entity.enums.UserRole;
 
+import java.util.UUID;
+
 @Entity  // Entity anotatsiya shu class bazada ham shunaqa nomli table yaratmoqchimiz
 @Getter // getter method uchun
 @Setter // setter method
@@ -30,5 +32,8 @@ public class User extends Auditable {
 
     @Column(name = "is_verified")
     Boolean isVerified;
+
+    @Column(unique = true)
+    private UUID keycloakId;
 
 }

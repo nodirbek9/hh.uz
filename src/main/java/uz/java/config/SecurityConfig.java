@@ -3,12 +3,16 @@ package uz.java.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
@@ -17,7 +21,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import uz.java.filter.GlobalFilter;
+import uz.java.service.CustomUserDetailService;
 
+import java.util.Collection;
 import java.util.List;
 
 @Configuration
@@ -29,6 +35,7 @@ public class SecurityConfig {
     private final GlobalFilter gloabalFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AuthWhiteListProperty authWhiteListProperty;
+    private final CustomUserDetailService customUserDetailService;
     //    1. Basic authorization
 //    2. Form-based authorization
 //    3. JWT token orqali
@@ -61,6 +68,9 @@ public class SecurityConfig {
                         .requestMatchers(authWhiteListProperty.getWhiteList().toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()
                 )
+                .oauth2ResourceServer(oauth2ResourceServer -> {
+                    oauth2ResourceServer.jwt(jwt-> jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter()));
+                })
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(corsFilter(), ChannelProcessingFilter.class)
@@ -69,6 +79,15 @@ public class SecurityConfig {
                         httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint));
 
         return http.build();
+    }
+
+    private Converter<Jwt, UsernamePasswordAuthenticationToken> customJwtAuthenticationConverter() {
+        return jwt -> {
+            String keycloakId = jwt.getClaim("sub"); // Keycloak da jwt token ni ichidan user ni keycloakId ini olish
+            CustomUserDetails user = customUserDetailService.loadUserByUsername(keycloakId);
+            Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+            return new UsernamePasswordAuthenticationToken(user, jwt, authorities);
+        };
     }
 
     @Bean

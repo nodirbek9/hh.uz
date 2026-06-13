@@ -26,10 +26,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.liquibase:liquibase-core")
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    implementation("com.auth0:java-jwt:3.18.2")
+//    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+//    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+//    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+//    implementation("com.auth0:java-jwt:3.18.2")
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("redis.clients:jedis")
@@ -41,6 +41,10 @@ dependencies {
     //Keyclok
     implementation("org.keycloak:keycloak-admin-client:26.0.6")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
+
+    implementation("com.auth0:java-jwt:3.18.2")
+    implementation("com.auth0:jwks-rsa:0.22.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
 
     // OkHttp

@@ -1,5 +1,6 @@
 package uz.java.filter;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.LocaleResolver;
 import uz.java.config.AuthWhiteListProperty;
 import uz.java.config.CustomUserDetails;
 import uz.java.exception.GenericRuntimeException;
@@ -26,8 +26,6 @@ import uz.java.service.JwtTokenService;
 import uz.java.util.ApiConstants;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
 
 @Slf4j
 @Component // -->> generic streotype anotation
@@ -36,7 +34,6 @@ public class GlobalFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
     private final CustomUserDetailService userDetailsService;
-    private final LocaleResolver localeResolver;
     private final AuthWhiteListProperty authWhiteListProperty;
 
     @Autowired
@@ -54,16 +51,10 @@ public class GlobalFilter extends OncePerRequestFilter {
                 log.info("Attempting to extract token from request");
                 String token = getTokenFromRequest(request);
                 log.info("Token extracted: {}", token != null ? "YES (length: " + token.length() + ")" : "NO");
-                if (jwtTokenService.isValid(token)) {
-                    log.info("Token is valid");
-                    String username = jwtTokenService.subject(token);
-                    log.info("Username from token: {}", username);
-                    CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(username);
-                    authenticate(request, customUserDetails);
-                    log.info("User authenticated by id: {}", customUserDetails.getUserId());
-                } else {
-                    log.error("Token is INVALID");
-                }
+                DecodedJWT verified = jwtTokenService.validate(token);
+                String keycloakId = verified.getClaim("sub").asString();
+                CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(keycloakId);
+                authenticate(request, customUserDetails);
             } catch (GenericRuntimeException | AccessDeniedException | InvalidDataException e) {
                 log.error("Global filter error: {}", e.getMessage(), e);
                 resolver.resolveException(request, response, null, e);

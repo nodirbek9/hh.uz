@@ -24,19 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<Long> register(@RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
-    }
-
-
-    @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refresh(@RequestParam String refreshToken) {
-        return ResponseEntity.ok(service.refresh(refreshToken));
-    }
-
-    @PostMapping("/logout")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> logout(@AuthenticationPrincipal CustomUserDetails principal) {
-        return ResponseEntity.ok(service.logout(principal.getUsername()));
     }
 }

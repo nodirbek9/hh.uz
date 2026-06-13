@@ -24,6 +24,13 @@ spring:
       port: 6379
       host: redis
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/hh-web-app-realm
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: public
@@ -33,7 +40,7 @@ spring:
     drop-first: false
 
 server:
-  port: 7777
+  port: 7070
 
 jwt:
   token:
@@ -59,3 +66,14 @@ project:
       default-bucket: java-team
 root:
   path: home/files/
+
+app:
+  keycloak:
+    admin-password: ${KC_BOOTSTRAP_ADMIN_PASSWORD:keycloakAdmin@1234}
+    admin-username: ${KC_BOOTSTRAP_KEYCLOAK_ADMIN:keycloakAdmin}
+    master-realm: master
+    realm: hh-web-app-realm
+    keycloak-server-url: http://localhost:8080
+    client-id: hh-cli
+    admin-client-id: admin-cli
+    client-secret: XVFiINeyxTVfW3FSEEzZbN9y8tVGMEmy

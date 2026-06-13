@@ -1,150 +1,197 @@
 package uz.java.service;
 
-import lombok.RequiredArgsConstructor;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.ws.rs.BadRequestException;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+import uz.java.client.KeycloakServiceClient;
 import uz.java.config.CustomAuthenticationProvider;
-import uz.java.config.CustomUserDetails;
 import uz.java.dto.auth.RegisterRequest;
 import uz.java.dto.auth.TokenResponse;
-import uz.java.entity.enums.SessionUserStatus;
-import uz.java.entity.user.SessionUser;
 import uz.java.entity.user.User;
 import uz.java.entity.user.UserProfile;
-import uz.java.exception.GenericNotFoundException;
-import uz.java.exception.InvalidDataException;
-import uz.java.mapper.UserMapper;
-import uz.java.repository.SessionUserRepository;
+import uz.java.exception.GenericRuntimeException;
 import uz.java.repository.UserProfileRepository;
 import uz.java.repository.UserRepository;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class AuthService {
-
-    private final CustomAuthenticationProvider authenticationProvider;
+    private final KeycloakServiceClient keycloakServiceClient;
+    private final Keycloak keycloak;
+    private final CustomAuthenticationProvider customAuthenticationProvider;
     private final UserRepository userRepository;
-    private final SessionUserRepository sessionUserRepository;
     private final JwtTokenService jwtTokenService;
-    private final UserProfileRepository userProfileRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
+    UserProfileRepository userProfileRepository;
 
-    @Transactional
+    @Value("${app.keycloak.client-id}")
+    private String clientId;
+
+    @Value("${app.keycloak.client-secret}")
+    private String clientSecret;
+
+    @Value("${app.keycloak.realm}")
+    private String realm;
+
+    public AuthService(@Value("${app.keycloak.keycloak-server-url}") String baseUrl,
+                       JwtTokenService jwtTokenService,                           // ← добавить
+                       Keycloak keycloakAdminClient,
+                       PasswordEncoder passwordEncoder,
+                       UserProfileRepository userProfileRepository,
+                       CustomAuthenticationProvider customAuthenticationProvider, UserRepository userRepository) {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build();
+
+        this.customAuthenticationProvider = customAuthenticationProvider;
+        this.jwtTokenService = jwtTokenService;
+        this.keycloak = keycloakAdminClient;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userProfileRepository = userProfileRepository;
+        this.keycloakServiceClient = retrofit.create(KeycloakServiceClient.class);
+    }
+
     public TokenResponse login(String username, String password) {
-        Authentication authenticate = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        CustomUserDetails userDetails = (CustomUserDetails) authenticate.getPrincipal();
-        User user = userRepository.findById(userDetails.getUserId()).orElse(null);
-        if (user == null)
-            throw new GenericNotFoundException("user.not.found");
+        try {
+            Response<TokenResponse> response = keycloakServiceClient.getToken(
+                    "password",
+                    clientId,
+                    clientSecret,
+                    username,
+                    password
+            ).execute();
+            String errorBody = "";
+            if (!response.isSuccessful()) {
+                try {
+                    if (response.errorBody() != null) {
+                        errorBody = response.errorBody().string();
+                        throw new BadRequestException("Token olishda xatolik: " + errorBody);
+                    }
+                } catch (IOException e) {
+                    throw new BadRequestException("Xatolikni o'qishda muammo yuz berdi.");
+                }
+            }
+            if (response.body() == null) {
+                throw new BadRequestException("Token olishda xatolik : response.body() == null" + "\n" + response.message() + "\n" + " --- getPinfl");
+            }
+            if (response.body().getAccessToken() == null) {
+                throw new BadRequestException("Token olishda xatolik : response.body().getAccessToken() == null" + "\n" + response.message() + "\n" + " --- getPinfl");
+            }
+            DecodedJWT data = JWT.decode(response.body().getAccessToken());
 
-        SessionUser sessionUser = sessionUserRepository.findByUserId(user.getId());
-        if (sessionUser != null) {
-            String accessToken = jwtTokenService.generateToken(userDetails.getUsername());
-            String refreshToken = jwtTokenService.generateRefreshToken(userDetails.getUsername());
-            sessionUser.setAccessToken(accessToken);
-            sessionUser.setRefreshToken(refreshToken);
-            sessionUser.setStatus(SessionUserStatus.ACTIVE);
-            sessionUserRepository.save(sessionUser);
+            customAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(
+                    data.getClaim("sub").asString(), password
+            ));
             return TokenResponse.builder()
-                    .accessToken(sessionUser.getAccessToken())
-                    .refreshToken(sessionUser.getRefreshToken())
+                    .accessToken(response.body().getAccessToken())
+                    .refreshToken(response.body().getRefreshToken())
                     .build();
+        } catch (IOException e) {
+            throw new GenericRuntimeException("Token olishda xatolik: " + e.getMessage());
         }
-        String accessToken = jwtTokenService.generateToken(userDetails.getUsername());
-        String refreshToken = jwtTokenService.generateRefreshToken(userDetails.getUsername());
-        sessionUserRepository.save(SessionUser.builder()
-                .user(user)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .status(SessionUserStatus.ACTIVE)
-                .build());
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
     }
 
-    @Transactional
-    public TokenResponse register(RegisterRequest request) {
+    public Long register(RegisterRequest request) {
+        // 1. Проверка username в Keycloak
+        if (!keycloak.realm(realm).users()
+                .searchByUsername(request.getUsername(), false).isEmpty()) {
+            throw new GenericRuntimeException("username.already.exists");
+        }
+
+        // 2. Проверить локально тоже
         if (userRepository.existsByUsername(request.getUsername()))
-            throw new InvalidDataException("username.already.exists");
+            throw new GenericRuntimeException("username.already.exists");
         if (userRepository.existsByEmail(request.getEmail()))
-            throw new InvalidDataException("email.already.exists");
+            throw new GenericRuntimeException("email.already.exists");
 
-        // 2. User yaratish
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        user.setIsActive(true);
-        user.setIsVerified(false);
-        User savedUser = userRepository.save(user);
+        // 3. Создать Keycloak пользователя
+        UserRepresentation kcUser = new UserRepresentation();
+        kcUser.setUsername(request.getUsername());
+        kcUser.setEmail(request.getEmail());
+        kcUser.setFirstName(request.getFirstName());
+        kcUser.setLastName(request.getLastName());
+        kcUser.setEnabled(true);
+        kcUser.setEmailVerified(true);
 
-        // 3. UserProfile avtomatik yaratish
-        UserProfile profile = new UserProfile();
-        profile.setUser(savedUser);
-        profile.setFirstName(request.getFirstName());
-        profile.setLastName(request.getLastName());
-        userProfileRepository.save(profile);
+        CredentialRepresentation cred = new CredentialRepresentation();
+        cred.setType(CredentialRepresentation.PASSWORD);
+        cred.setValue(request.getPassword());
+        cred.setTemporary(false);
+        kcUser.setCredentials(List.of(cred));
 
-        // 4. Token generatsiya
-        String accessToken  = jwtTokenService.generateToken(savedUser.getUsername());
-        String refreshToken = jwtTokenService.generateRefreshToken(savedUser.getUsername());
-        sessionUserRepository.save(SessionUser.builder()
-                .user(savedUser)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .status(SessionUserStatus.ACTIVE)
-                .build());
+        String keycloakUserId = null;
+        try (var response = keycloak.realm(realm).users().create(kcUser)) {
 
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
+            if (response.getStatusInfo().getFamily() != jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL) {
+                throw new GenericRuntimeException("keycloak.user.create.failed");
+            }
 
-    @Transactional
-    public TokenResponse refresh(String refreshToken) {
-        if (!jwtTokenService.isValid(refreshToken))
-            throw new InvalidDataException("invalid.token");
+            // Извлечь keycloakUserId из Location (как у учителя)
+            String location = response.getLocation().toString();
+            keycloakUserId = location.substring(location.lastIndexOf("/") + 1);
 
-        String username = jwtTokenService.subject(refreshToken);
-        User user = userRepository.findByUsername(username);
-        if (user == null)
-            throw new GenericNotFoundException("user.not.found");
+            // 4. Сохранить в БД (как saveEntity у учителя, но вручную)
+            User user = new User();
+            user.setUsername(request.getUsername());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRole(request.getRole());
+            user.setIsActive(true);
+            user.setKeycloakId(UUID.fromString(keycloakUserId));  // ← ВАЖНО!
+            userRepository.save(user);
 
-        SessionUser sessionUser = sessionUserRepository.findByUserId(user.getId());
-        if (sessionUser == null || !sessionUser.getRefreshToken().equals(refreshToken))
-            throw new InvalidDataException("invalid.token");
+            // 5. UserProfile
+            UserProfile profile = new UserProfile();
+            profile.setUser(user);
+            profile.setFirstName(request.getFirstName());
+            profile.setLastName(request.getLastName());
 
-        String newAccessToken = jwtTokenService.generateToken(username);
-        String newRefreshToken = jwtTokenService.generateRefreshToken(username);
-        sessionUser.setAccessToken(newAccessToken);
-        sessionUser.setRefreshToken(newRefreshToken);
-        sessionUserRepository.save(sessionUser);
+            // 6. Вернуть токен
+            return userProfileRepository.save(profile).getId();
 
-        return TokenResponse.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
-    }
-
-    @Transactional
-    public Boolean logout(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) throw new GenericNotFoundException("user.not.found");
-
-        SessionUser sessionUser = sessionUserRepository.findByUserId(user.getId());
-        if (sessionUser != null) {
-            sessionUser.setStatus(SessionUserStatus.INACTIVE);
-            sessionUserRepository.save(sessionUser);
+        } catch (Exception e) {
+            // Rollback (как у учителя)
+            if (keycloakUserId != null) {
+                try {
+                    keycloak.realm(realm).users().delete(keycloakUserId);
+                } catch (Exception ex) {
+                    log.error("Failed to rollback Keycloak user: {}", keycloakUserId, ex);
+                }
+            }
+            throw new GenericRuntimeException(e.getMessage());
         }
-        return true;
+    }
+    private boolean checkUsername(String username) {
+        return keycloak.realm(realm)
+                .users()
+                .searchByUsername(username, false).isEmpty();
     }
 
 }

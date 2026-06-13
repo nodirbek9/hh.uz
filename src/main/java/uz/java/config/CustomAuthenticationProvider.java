@@ -21,16 +21,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String keycloakId = authentication.getName();
         String password = authentication.getCredentials().toString();
-        CustomUserDetails userDetails = customUserDetailService.loadUserByUsername(username);
-        if (!passwordEncoder.matches(password, userDetails.getPassword()))
+        CustomUserDetails userDetails = customUserDetailService.loadUserByUsername(keycloakId);
+        if (!passwordEncoder.matches(password, userDetails.getUser().getPassword()))
             throw new ValidationException("invalid.user.details");
         return new UsernamePasswordAuthenticationToken(userDetails, authentication);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }
